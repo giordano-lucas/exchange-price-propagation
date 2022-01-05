@@ -1,3 +1,4 @@
+jupyter_server
 ipywidgets
 plotly
 numpy
