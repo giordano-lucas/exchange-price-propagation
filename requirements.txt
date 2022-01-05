@@ -1,6 +1,8 @@
-jupyter_server
-ipywidgets
-plotly
+ipykernel
+ipython
+jupyter-client
+jupyter-core
 numpy
 pandas
-voila
+ipywidgets
+plotly
