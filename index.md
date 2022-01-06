@@ -21,3 +21,8 @@ Data used in the study come from two different sources: information about exploi
 ## Data preprocessing
 
 
+## Interactive visualisation 
+
+[is available at this address](https://murmuring-garden-88123.herokuapp.com/)
+
+> **Note**: this application runs of a free container of ***Heroku***, so it may take a couple of seconds to load.
