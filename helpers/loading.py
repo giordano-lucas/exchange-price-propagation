@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd
 from .preprocessing import convert_time, transform_to_returns
 
-import dask
-dask.config.set(scheduler="processes")
-
 
 def file_exist(path):
     return len(glob.glob(path))>0
