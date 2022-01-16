@@ -10,13 +10,12 @@ def increasing_function_check(correlations):
     return not (max_idx > 0.1*N and max_idx < 0.9*N)
 
 
-def find_best_delay(n1, n2):
+def find_best_delay(df,n1, n2,step_size = 1000,verbose=0):
     n_iteration = 15
     center = 0
-    step_size = 1000  # ms
     last_best_delay = None
     for it in range(n_iteration):
-        delays, correlations, los, his = compute_delays(
+        delays, correlations, los, his = compute_delays(df,
             n1, n2, center=center, step_size=step_size)
         best_delay = delays[np.argmax(correlations)]
         if (last_best_delay is not None and last_best_delay == best_delay) or not step_size > 1:
@@ -24,9 +23,9 @@ def find_best_delay(n1, n2):
 
         last_best_delay = best_delay
         center = best_delay
-
-        print(
-            f"idx:{np.argmax(correlations)}, step_size:{step_size}, center:{center}")
+        if verbose==1:
+            print(
+                f"iteration:{it}, idx:{np.argmax(correlations)}, step_size:{step_size}, center:{center}")
         if increasing_function_check(correlations):
             step_size = int(step_size*1.5)
         else:
