@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd
 from .preprocessing import convert_time, transform_to_returns
 
-import dask
-dask.config.set(scheduler="processes")
-
 
 def __load_bbo_file(file):
     res = pd.read_csv(file, compression="gzip").rename(
