@@ -1,0 +1,17 @@
+dir: 
+  data: Data
+  figures:  figures
+signal: trade
+stock:  MSFT
+markets: 
+  - B
+  - C
+  - DF
+  - II
+  - MW
+  - O
+  - OQ
+  - P
+test_date: 2010-01-04
+open_time: 09:30:00
+close_time: 16:00:00
