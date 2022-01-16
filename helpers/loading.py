@@ -36,5 +36,5 @@ def load_daily_data(date, to_returns=False):
             path = glob.glob(path_expr)[0]
             daily_data[market] = __load_trade_file(path, to_returns)
         except:
-            print(f"missing data : {date} {market}")
+            print(f"missing data : {date} {market}",end="\r")
     return daily_data
