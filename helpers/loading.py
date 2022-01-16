@@ -9,6 +9,9 @@ import dask
 dask.config.set(scheduler="processes")
 
 
+def file_exist(path):
+    return len(glob.glob(path))>0
+
 def __load_bbo_file(file):
     res = pd.read_csv(file, compression="gzip").rename(
         columns={"bid-price": "bid"})

@@ -1,6 +1,10 @@
 dir: 
   data: Data
   figures:  figures
+  results : results
+files :
+    results:
+        all_best_lags : "results/all_best_lags.csv" 
 signal: trade
 stock:  MSFT
 markets: 
