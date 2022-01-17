@@ -5,10 +5,14 @@ from helpers.stats import compute_correlation
 def generate_delayed_data(s1, s2, delay, join_type="outer"):
     s1 = s1.copy()
     s2 = s2.copy()
+    
+    h = min(s1.index.max(),s2.index.max())
+    l = max(s1.index.min(),s2.index.min())
+    
     s1.index = s1.index + pd.Timedelta(milliseconds=delay)
     pair_data = s1.join(s2, how=join_type, lsuffix="_1",
                         rsuffix="_2").ffill().dropna()
-    return pair_data
+    return pair_data[(pair_data.index>=l)*(pair_data.index<=h)]
 
 
 def compute_delays(df, n1, n2, center=0, step_size=1000, n_step=20):

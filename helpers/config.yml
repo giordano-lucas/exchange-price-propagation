@@ -1,6 +1,11 @@
 dir: 
-  data: Data
+  data: data
   figures:  figures
+  results : results
+files :
+    exchanges_country_suffixes : data/exchanges_country_suffixes.csv
+    results:
+        all_best_lags : "results/all_best_lags.csv" 
 signal: trade
 stock:  MSFT
 markets: 

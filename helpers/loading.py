@@ -6,6 +6,9 @@ import pandas as pd
 from .preprocessing import convert_time, transform_to_returns
 
 
+def file_exist(path):
+    return len(glob.glob(path))>0
+
 def __load_bbo_file(file):
     res = pd.read_csv(file, compression="gzip").rename(
         columns={"bid-price": "bid"})
@@ -33,5 +36,5 @@ def load_daily_data(date, to_returns=False):
             path = glob.glob(path_expr)[0]
             daily_data[market] = __load_trade_file(path, to_returns)
         except:
-            print(f"missing data : {date} {market}")
+            print(f"missing data : {date} {market}",end="\r")
     return daily_data
