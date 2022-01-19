@@ -9,14 +9,19 @@ files :
 signal: trade
 stock:  MSFT
 markets: 
-  - B
-  - C
-  - DF
-  - II
-  - MW
-  - O
-  - OQ
-  - P
+    suffix:
+        DE : ""
+        GB : .L
+        NL : ""
+        UK : .L
+        US : ""
+  
+location: 
+    -DE
+    -GB
+    -NL
+    -UK
+    -US
 test_date: 2010-01-04
 open_time: 09:30:00
 close_time: 16:00:00
