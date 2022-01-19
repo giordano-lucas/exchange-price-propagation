@@ -1,5 +1,5 @@
 dir: 
-  data: data
+  data: data/markets/
   figures:  figures
   results : results
 files :

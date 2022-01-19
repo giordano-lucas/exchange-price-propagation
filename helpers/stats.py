@@ -3,7 +3,7 @@ from scipy import stats
 
 
 def compute_correlation(pair_data, CI=True):
-    s1, s2 = pair_data["trade-price_1"].values, pair_data["trade-price_2"].values
+    s1, s2 = pair_data["price_1"].values, pair_data["price_2"].values
     N = len(s1)
     corr, p_val = stats.pearsonr(s1, s2)
     if not CI:
