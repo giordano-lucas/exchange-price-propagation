@@ -7,26 +7,30 @@ from .preprocessing import convert_time, transform_to_returns
 
 
 def file_exist(path):
-    return len(glob.glob(path))>0
+    return len(glob.glob(path)) > 0
 
-def __load_bbo_file(file):
+
+def __format_loaded_df(df, col, to_returns):
+    df = df.rename(columns={col: "price"})
+    df = df[["price", "date"]].drop_duplicates().set_index("date")
+    if to_returns:
+        df = transform_to_returns(df)
+    return df
+
+
+def __load_bbo_file(file, to_returns=True):
     res = pd.read_csv(file, compression="gzip").rename(
-        columns={"bid-price": "bid"})
+        columns={"bid-price": "bid", "ask-price": "ask"})
     res = convert_time(res)
-    res = res[res.bid > 0]
-    #res = res.bid.diff(1).dropna()>0
-    return res[["bid", "xltime"]].drop_duplicates().set_index("xltime")
+    res["mid"] = (res.bid + res.ask)/2
+    return __format_loaded_df(res, "mid", to_returns)
 
 
-def __load_trade_file(file, to_returns):
+def __load_trade_file(file, to_returns=True):
     res = pd.read_csv(file, compression="gzip")
     res = convert_time(res)
     res = res[res["trade-stringflag"] == "uncategorized"]
-    res = res[["trade-price", "date"]].drop_duplicates().set_index("date")
-    if to_returns:
-        res = transform_to_returns(res)
-    return res
-
+    return __format_loaded_df(res, "trade-price", to_returns)
 
 def load_daily_data(date, to_returns=False):
     daily_data = {}
@@ -36,5 +40,5 @@ def load_daily_data(date, to_returns=False):
             path = glob.glob(path_expr)[0]
             daily_data[market] = __load_trade_file(path, to_returns)
         except:
-            print(f"missing data : {date} {market}",end="\r")
+            print(f"missing data : {date} {market}", end="\r")
     return daily_data

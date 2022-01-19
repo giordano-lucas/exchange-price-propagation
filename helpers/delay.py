@@ -15,10 +15,7 @@ def generate_delayed_data(s1, s2, delay, join_type="outer"):
     return pair_data[(pair_data.index>=l)*(pair_data.index<=h)]
 
 
-n_step = 20
-
-
-def compute_delays(df, n1, n2, center=0, step_size=1000):
+def compute_delays(df, n1, n2, center=0, step_size=1000, n_step=20):
     correlations = []
     los = []
     his = []
@@ -31,4 +28,4 @@ def compute_delays(df, n1, n2, center=0, step_size=1000):
         correlations.append(corr)
         los.append(corr-lo)
         his.append(hi-corr)
-    return delays, correlations, los, his
+    return delays, correlations, los, his, 
