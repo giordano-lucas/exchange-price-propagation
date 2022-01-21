@@ -14,7 +14,8 @@ To perform the described analysis we compare the evolutions of `SHELL` stock pri
 |  0 |  corr(`s1_t`,`s2_{t}`) |
 |  1 |  corr(`s1_t`,`s2_{t+1}`) |
 |.....|....|
-
+Correlations are computed using the Hayashi Yoshida estimator. Once computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
+At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
 # Data Acquisition
 
 Data used in the study come from two different sources: information about exploited cycles comes from the dataset used in the arxiv paper. Data concerning rates preceding the cycles come are from through bitquery.
