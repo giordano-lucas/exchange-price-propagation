@@ -37,7 +37,7 @@ def __load_trade_file(file, to_returns=True):
     return __format_loaded_df(res, "trade-price", to_returns)
 
 
-def load_daily_data(date, to_returns=False):
+def load_daily_data(date, to_returns=True):
     daily_data = {}
     for market in config['markets']['list']:
         mkt_suffix = config["markets"]['suffix'][market]
@@ -65,7 +65,7 @@ def get_all_dates(stock='RDSA'):
         except:
             print(s)
         return date
-    all_files = glob.glob(f"./Data/*/trade/{stock}.[A-Z]*/*")
+    all_files = glob.glob(f"{config['dir']['data']}/*/trade/{stock}.[A-Z]*/*")
     all_dates = [extract_date(s) for s in all_files]
     all_dates = list(set(all_dates))
     all_dates.sort()
