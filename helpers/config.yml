@@ -1,5 +1,5 @@
 dir: 
-  data: data/markets/
+  data: data/markets
   figures:  figures
   results : results
 files :
@@ -10,16 +10,15 @@ signal: trade
 stock: RDSa
 old_stock: MSFT
 markets: 
-    GB : L
-    NL : AS
-    US : N
+    list:
+        - GB
+        - US
+        - NL
+    suffix:
+        GB : L
+        NL : AS
+        US : N
   
-location: 
-    -DE
-    -GB
-    -NL
-    -UK
-    -US
 test_date: 2010-01-04
 open_time: 09:30:00
 close_time: 16:00:00
