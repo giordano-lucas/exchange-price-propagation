@@ -49,7 +49,7 @@ def load_daily_data(date, to_returns=False):
         else:
             path = path[0]
         daily_data[market] = __load_trade_file(path, to_returns)
-            
+ 
     return daily_data
 
 
@@ -57,7 +57,7 @@ def load_daily_data(date, to_returns=False):
 # ******************* ALL DATES ***********************
 # *****************************************************
 
-def get_all_dates(location='US', market='RDSA'):
+def get_all_dates(stock='RDSA'):
     """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
     def extract_date(s):
         try:
@@ -65,8 +65,7 @@ def get_all_dates(location='US', market='RDSA'):
         except:
             print(s)
         return date
-    all_files = glob.glob(
-        f"./Data/markets/{location}/{config['signal']}/{market}/*")
+    all_files = glob.glob(f"./Data/*/trade/{stock}.[A-Z]*/*")
     all_dates = [extract_date(s) for s in all_files]
     all_dates = list(set(all_dates))
     all_dates.sort()
