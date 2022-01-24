@@ -5,7 +5,7 @@ dir:
 files :
     exchanges_country_suffixes : data/exchanges_country_suffixes.csv
     results:
-        all_best_lags : "results/all_best_lags.csv" 
+        all_best_lags : "results/lags_{}.csv" 
 signal: trade
 stock: RDSa
 old_stock: MSFT
