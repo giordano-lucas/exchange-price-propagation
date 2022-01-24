@@ -1,5 +1,5 @@
 dir: 
-  data: data/markets/
+  data: data
   figures:  figures
   results : results
 files :
@@ -11,7 +11,7 @@ stock:  MSFT
 markets: 
     suffix:
         DE : ""
-        GB : .L
+        GB : ""
         NL : ""
         UK : .L
         US : ""

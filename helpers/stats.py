@@ -17,7 +17,6 @@ def compute_correlation(pair_data, CI=True):
 
 def __compute_ci(corr, p_val, N):
     r_z = np.arctanh(corr)
-    print(N)
     se = 1/np.sqrt(N-3)
     alpha = 0.05
     z = stats.norm.ppf(1-alpha/2)
