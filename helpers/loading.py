@@ -18,7 +18,7 @@ def __format_loaded_df(df, col, preprocessing_steps):
     series = df[["price", "date"]].drop_duplicates().set_index("date")
     series = preprocessing_pipeline(
             series,steps=preprocessing_steps )
-    return series
+    return series.replace([np.inf, -np.inf], np.nan).dropna()
 
 
 

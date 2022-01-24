@@ -5,7 +5,8 @@ dir:
 files :
     exchanges_country_suffixes : data/exchanges_country_suffixes.csv
     results:
-        all_best_lags : "results/all_best_lags.csv" 
+        all_best_lags : "results/lags_{}.csv" 
+        liquidity : "results/liquidity.csv" 
 signal: trade
 stock: RDSa
 old_stock: MSFT
@@ -19,6 +20,21 @@ markets:
         NL : AS
         US : N
   
+  
+distances : 
+    NL :
+        GB: 357
+        US: 5570
+        NL : 0
+    GB: 
+        NL: 357
+        US: 5862
+        GB : 0
+    US:
+        NL: 5570
+        GB: 5862
+        US: 0
+        
 test_date: 2010-01-04
 open_time: 09:30:00
 close_time: 16:00:00
