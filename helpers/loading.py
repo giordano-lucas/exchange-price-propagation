@@ -37,12 +37,11 @@ def __load_trade_file(file, to_returns=True):
     return __format_loaded_df(res, "trade-price", to_returns)
 
 
-
-def load_daily_data(date, location, to_returns=False):
+def load_daily_data(date, to_returns=False):
     daily_data = {}
-    for market in config['markets']:
-        mkt_suffix = config["markets"][location]
-        path_expr = f"{config['dir']['data']}/{location}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
+    for market in config['markets']['list']:
+        mkt_suffix = config["markets"]['suffix'][market]
+        path_expr = f"{config['dir']['data']}/{market}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
         path = glob.glob(path_expr)
         if len(path) == 0:
             print(f"missing data : {date} {market}", end="\r")
