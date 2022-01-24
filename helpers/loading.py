@@ -3,7 +3,7 @@ import glob
 import re
 import numpy as np
 import pandas as pd
-from .preprocessing import convert_time, transform_to_returns
+from .preprocessing import preprocessing_pipeline, convert_time
 import traceback
 
 def file_exist(path):
@@ -18,7 +18,8 @@ def __format_loaded_df(df, col, to_returns):
     df = df.rename(columns={col: "price"})
     series = df[["price", "date"]].drop_duplicates().set_index("date")
     if to_returns:
-        series = transform_to_returns(series)
+        series = preprocessing_pipeline(
+            series, steps=['log_returns', 'numeric'])
     return series
 
 
