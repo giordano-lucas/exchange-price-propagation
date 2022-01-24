@@ -16,15 +16,14 @@ def file_exist(path):
 def __format_loaded_df(df, col, preprocessing_steps):
     df = df.rename(columns={col: "price"})
     series = df[["price", "date"]].drop_duplicates().set_index("date")
+    series = series[~series.index.duplicated(keep='first')]
     series = preprocessing_pipeline(
             series,steps=preprocessing_steps )
     return series.replace([np.inf, -np.inf], np.nan).dropna()
 
 
-
-
 def __load_bbo_file(file, preprocessing_steps):
-    res = pd.read_csv(file, compression="gzip").rename(
+    res = pd.read_parquet(file).rename(
         columns={"bid-price": "bid", "ask-price": "ask"})
     res = convert_time(res)
     res["mid"] = (res.bid + res.ask)/2
@@ -37,6 +36,11 @@ def __load_trade_file(file, preprocessing_steps):
     res = res[res["trade-stringflag"] == "uncategorized"]
     return __format_loaded_df(res, "trade-price", preprocessing_steps)
 
+def __get_load_file():
+    if config['signal'] == 'trade':
+        return __load_trade_file
+    else:
+        return __load_bbo_file
 
 def load_daily_data(date, preprocessing_steps):
     daily_data = {}
@@ -49,7 +53,7 @@ def load_daily_data(date, preprocessing_steps):
             return
         else:
             path = path[0]
-        daily_data[market] = __load_trade_file(path, preprocessing_steps)
+            daily_data[market] = __get_load_file()(path, preprocessing_steps)
  
     return daily_data
 

@@ -1,5 +1,6 @@
 dir: 
   data: data/markets
+  merged_data: data/merged
   figures:  figures
   results : results
 files :
@@ -7,7 +8,7 @@ files :
     results:
         all_best_lags : "results/lags_{}.csv" 
         liquidity : "results/liquidity.csv" 
-signal: trade
+signal: bbo
 stock: RDSa
 old_stock: MSFT
 markets: 

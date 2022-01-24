@@ -12,7 +12,7 @@ def generate_delayed_data(s1, s2, delay, join_type="outer"):
     s1.index = s1.index + pd.Timedelta(milliseconds=delay)
     pair_data = s1.join(s2, how=join_type, lsuffix="_1",
                         rsuffix="_2").ffill().dropna()
-    return pair_data[(pair_data.index>=l)*(pair_data.index<=h)]
+    return pair_data[(l<=pair_data.index)*(pair_data.index<=h)]
 
 
 def compute_delays(df, n1, n2, center=0, step_size=1000, n_step=20):

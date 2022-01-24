@@ -15,6 +15,9 @@ def log_returns(x: pd.Series):
     ret = np.log(x).diff().dropna()
     return ret
 
+def returns(x:pd.Series):
+    return x.pct_change().dropna()
+
 def binary_returns(x: pd.Series):
     ret = x.diff(1).dropna() > 0
     return ret*1-1*(1-ret)
@@ -35,6 +38,7 @@ def numeric(x: pd.Series):
 #############################################################
 
 transformations = {
+    'returns':returns,
     'log_returns': log_returns,
     'binary_returns': binary_returns,
     'moving_average': moving_average,
