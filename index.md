@@ -24,3 +24,8 @@ At this point, we obtain a time series of lags (one per day) that are interprete
 [is available at this address](https://murmuring-garden-88123.herokuapp.com/)
 
 > **Note**: this application runs of a free container of ***Heroku***, so it may take a couple of seconds to load.
+
+
+## Multiple currencies
+Pearson correlation is invariant under linear transformations of our varibles. In particular, if we want to use a daily echange rate, we don't need to convert the data into the right currency. 
+We don't need to 
