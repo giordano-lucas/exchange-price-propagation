@@ -1,31 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@AugustinKapps 
-github
-/
-gitignore
-Public
-Code
-Pull requests
-208
-Actions
-Security
-Insights
-gitignore/Python.gitignore
-@bdougie
-bdougie Merge pull request #3911 from JP-Ellis/patch-1
-…
-Latest commit 3b6d9b0 8 days ago
- History
- 87 contributors
-@arcresu@shiftkey@Lucretiel@Harrison-G@jwg4@GabrielC101@misaelnieto@pmsosa@svkampen@vltr@thedrow@matheussl
-152 lines (124 sloc)  2.7 KB
-   
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -147,7 +119,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-Data/
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -178,16 +149,7 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+
+data/
 bd4f/
+.vscode/

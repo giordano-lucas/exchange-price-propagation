@@ -7,14 +7,21 @@ files :
     results:
         all_best_lags : "results/all_best_lags.csv" 
 signal: trade
-stock:  MSFT
+stock: RDSa
+old_stock: MSFT
 markets: 
+<<<<<<< HEAD
     suffix:
         DE : ""
         GB : ""
         NL : ""
         UK : .L
         US : ""
+=======
+    GB : L
+    NL : AS
+    US : N
+>>>>>>> 9699c4d04f0d23da51aa6a5734eaad373afa9f5b
   
 location: 
     -DE

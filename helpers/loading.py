@@ -4,18 +4,22 @@ import re
 import numpy as np
 import pandas as pd
 from .preprocessing import convert_time, transform_to_returns
-
+import traceback
 
 def file_exist(path):
     return len(glob.glob(path)) > 0
 
+# *****************************************************
+# ******************** DAILY **************************
+# *****************************************************
+
 
 def __format_loaded_df(df, col, to_returns):
     df = df.rename(columns={col: "price"})
-    df = df[["price", "date"]].drop_duplicates().set_index("date")
+    series = df[["price", "date"]].drop_duplicates().set_index("date")
     if to_returns:
-        df = transform_to_returns(df)
-    return df
+        series = transform_to_returns(series)
+    return series
 
 
 def __load_bbo_file(file, to_returns=True):
@@ -32,6 +36,7 @@ def __load_trade_file(file, to_returns=True):
     res = res[res["trade-stringflag"] == "uncategorized"]
     return __format_loaded_df(res, "trade-price", to_returns)
 
+<<<<<<< HEAD
 def load_daily_data(date,stock,locations = config['location'], to_returns=False):
     daily_data = {}
     signal = config["signal"]
@@ -42,4 +47,40 @@ def load_daily_data(date,stock,locations = config['location'], to_returns=False)
         path = glob.glob(path_expr)[0]
         daily_data[location] = __load_trade_file(path, to_returns)
      
+=======
+
+def load_daily_data(date, location, to_returns=False):
+    daily_data = {}
+    for market in config['markets']:
+        mkt_suffix = config["markets"][location]
+        path_expr = f"{config['dir']['data']}/{location}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
+        path = glob.glob(path_expr)
+        if len(path) == 0:
+            print(f"missing data : {date} {market}", end="\r")
+            return
+        else:
+            path = path[0]
+        daily_data[market] = __load_trade_file(path, to_returns)
+            
+>>>>>>> 9699c4d04f0d23da51aa6a5734eaad373afa9f5b
     return daily_data
+
+
+# *****************************************************
+# ******************* ALL DATES ***********************
+# *****************************************************
+
+def get_all_dates(location='US', market='RDSA'):
+    """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
+    def extract_date(s):
+        try:
+            date = re.search(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", s).group(0)
+        except:
+            print(s)
+        return date
+    all_files = glob.glob(
+        f"./Data/markets/{location}/{config['signal']}/{market}/*")
+    all_dates = [extract_date(s) for s in all_files]
+    all_dates = list(set(all_dates))
+    all_dates.sort()
+    return all_dates

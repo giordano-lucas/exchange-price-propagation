@@ -6,8 +6,8 @@ def convert_time(df):
         df["xltime"], unit="d", origin="1899-12-30", utc=True)
     return df
 
-def transform_to_returns(x):
-    ret = np.log(x).diff(1).dropna()
+def transform_to_returns(x: pd.Series):
+    ret = np.log(x).diff().dropna()
     return ret
 
 
