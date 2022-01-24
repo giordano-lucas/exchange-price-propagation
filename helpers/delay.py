@@ -24,7 +24,10 @@ def compute_delays(df, n1, n2, center=0, step_size=1000, n_step=20):
     for delay in delays:
         s1, s2 = df[n1].copy(), df[n2].copy()
         pair_data = generate_delayed_data(s1, s2, delay)
-        corr, lo, hi = compute_correlation(pair_data)
+        if len(pair_data)==0:
+            corr, lo, hi = 0,0,0
+        else :    
+            corr, lo, hi = compute_correlation(pair_data)
         correlations.append(corr)
         los.append(corr-lo)
         his.append(hi-corr)
