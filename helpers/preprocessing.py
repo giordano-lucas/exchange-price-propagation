@@ -20,7 +20,7 @@ def binary_returns(x: pd.Series):
     return ret*1-1*(1-ret)
 
 def resample(x: pd.Series):
-    return x.resample("180S").mean()
+    return x.resample("1S").mean().dropna()
 
 
 def moving_average(x: pd.Series, w=30):
