@@ -27,7 +27,8 @@ def moving_average(x: pd.Series, w=30):
     return x.rolling(w, min_periods=1).mean()
 
 def numeric(x: pd.Series):
-    return pd.to_numeric(x, errors="coerce").dropna()
+    x.price = pd.to_numeric(x.price, errors="coerce")
+    return x.dropna()
 
 #############################################################
 ################### Pipeline transformations ##############

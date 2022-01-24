@@ -13,32 +13,32 @@ def file_exist(path):
 # ******************** DAILY **************************
 # *****************************************************
 
-
-def __format_loaded_df(df, col, to_returns):
+def __format_loaded_df(df, col, preprocessing_steps):
     df = df.rename(columns={col: "price"})
     series = df[["price", "date"]].drop_duplicates().set_index("date")
-    if to_returns:
-        series = preprocessing_pipeline(
-            series, steps=['log_returns', 'numeric'])
+    series = preprocessing_pipeline(
+            series,steps=preprocessing_steps )
     return series
 
 
-def __load_bbo_file(file, to_returns=True):
+
+
+def __load_bbo_file(file, preprocessing_steps):
     res = pd.read_csv(file, compression="gzip").rename(
         columns={"bid-price": "bid", "ask-price": "ask"})
     res = convert_time(res)
     res["mid"] = (res.bid + res.ask)/2
-    return __format_loaded_df(res, "mid", to_returns)
+    return __format_loaded_df(res, "mid", preprocessing_steps)
 
 
-def __load_trade_file(file, to_returns=True):
+def __load_trade_file(file, preprocessing_steps):
     res = pd.read_parquet(file)
     res = convert_time(res)
     res = res[res["trade-stringflag"] == "uncategorized"]
-    return __format_loaded_df(res, "trade-price", to_returns)
+    return __format_loaded_df(res, "trade-price", preprocessing_steps)
 
 
-def load_daily_data(date, to_returns=True):
+def load_daily_data(date, preprocessing_steps):
     daily_data = {}
     for market in config['markets']['list']:
         mkt_suffix = config["markets"]['suffix'][market]
@@ -49,7 +49,7 @@ def load_daily_data(date, to_returns=True):
             return
         else:
             path = path[0]
-        daily_data[market] = __load_trade_file(path, to_returns)
+        daily_data[market] = __load_trade_file(path, preprocessing_steps)
  
     return daily_data
 
