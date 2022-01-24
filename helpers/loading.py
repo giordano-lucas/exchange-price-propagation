@@ -4,7 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 from .preprocessing import convert_time, transform_to_returns
-
+import traceback
 
 def file_exist(path):
     return len(glob.glob(path)) > 0
@@ -16,10 +16,10 @@ def file_exist(path):
 
 def __format_loaded_df(df, col, to_returns):
     df = df.rename(columns={col: "price"})
-    df = df[["price", "date"]].drop_duplicates().set_index("date")
+    series = df[["price", "date"]].drop_duplicates().set_index("date")
     if to_returns:
-        df = transform_to_returns(df)
-    return df
+        series = transform_to_returns(series)
+    return series
 
 
 def __load_bbo_file(file, to_returns=True):
@@ -31,21 +31,25 @@ def __load_bbo_file(file, to_returns=True):
 
 
 def __load_trade_file(file, to_returns=True):
-    res = pd.read_csv(file, compression="gzip")
+    res = pd.read_parquet(file)
     res = convert_time(res)
     res = res[res["trade-stringflag"] == "uncategorized"]
     return __format_loaded_df(res, "trade-price", to_returns)
 
 
-def load_daily_data(date, to_returns=False):
+def load_daily_data(date, location, to_returns=False):
     daily_data = {}
     for market in config['markets']:
-        path_expr = f"./{config['dir']['data']}/{config['signal']}/{config['stock']}.{market}/{date}*.csv.gz"
-        try:
-            path = glob.glob(path_expr)[0]
-            daily_data[market] = __load_trade_file(path, to_returns)
-        except:
+        mkt_suffix = config["markets"][location]
+        path_expr = f"{config['dir']['data']}/{location}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
+        path = glob.glob(path_expr)
+        if len(path) == 0:
             print(f"missing data : {date} {market}", end="\r")
+            return
+        else:
+            path = path[0]
+        daily_data[market] = __load_trade_file(path, to_returns)
+            
     return daily_data
 
 
