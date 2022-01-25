@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import dask.dataframe as dd
 
 #############################################################
 ################### Individual transformations ##############
@@ -29,9 +29,18 @@ def resample(x: pd.Series):
 def moving_average(x: pd.Series, w=30):
     return x.rolling(w, min_periods=1).mean()
 
-def numeric(x: pd.Series):
-    x.price = pd.to_numeric(x.price, errors="coerce")
+def replace_inf(df):
+    df.replace([np.inf, -np.inf], np.nan).dropna()
+ 
+def __to_numeric(x,module):
+    x.price = module.to_numeric(x.price, errors="coerce")
     return x.dropna()
+
+def to_numeric(x: pd.Series):
+    return __to_numeric(x,pd)
+
+def to_numeric_dask(x):
+    return __to_numeric(x,dd)
 
 #############################################################
 ################### Pipeline transformations ##############
@@ -43,7 +52,7 @@ transformations = {
     'binary_returns': binary_returns,
     'moving_average': moving_average,
     'resample': resample,
-    'numeric': numeric
+    'numeric': to_numeric
 }
 
 def preprocessing_pipeline(x: pd.Series, steps:list = []):
