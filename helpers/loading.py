@@ -19,7 +19,9 @@ def __format_loaded_df(df, col, preprocessing_steps):
     series = series[~series.index.duplicated(keep='first')]
     series = preprocessing_pipeline(
             series,steps=preprocessing_steps )
-    return series.replace([np.inf, -np.inf], np.nan).dropna()
+    series = series.replace([np.inf, -np.inf], np.nan).dropna()
+    series = series[np.abs(series.price) > 0.0]
+    return series
 
 
 def __load_bbo_file(file, preprocessing_steps):

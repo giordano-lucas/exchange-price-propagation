@@ -18,6 +18,9 @@ def log_returns(x: pd.Series):
 def returns(x:pd.Series):
     return x.pct_change().dropna()
 
+def price_difference(x: pd.Series):
+    return x.diff().dropna()
+
 def binary_returns(x: pd.Series):
     ret = x.diff(1).dropna() > 0
     return ret*1-1*(1-ret)
@@ -39,6 +42,7 @@ def numeric(x: pd.Series):
 
 transformations = {
     'returns':returns,
+    'price_difference': price_difference,
     'log_returns': log_returns,
     'binary_returns': binary_returns,
     'moving_average': moving_average,
