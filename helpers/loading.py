@@ -81,7 +81,7 @@ class Loader:
 # ******************* DASK ***********************
 # *****************************************************
 
-def load_all_data_dask(market,signal=config["signal"],precision="D"):
+def load_all_data_dask(market, signal=config["transatlantic"]["signal"], precision="D"):
     all_files = glob.glob(f"{config['dir']['data']}/{market}/{signal}/*/*")
     data = dd.read_parquet(all_files)
     data = convert_time_dask(data,rounding=precision)
@@ -90,17 +90,16 @@ def load_all_data_dask(market,signal=config["signal"],precision="D"):
         data = data.rename(columns={"trade-price":"price"})
     elif signal=="bbo":
         data["price"] = (data["bid-price"] + data["ask-price"])/2
-    
+
     data = to_numeric_dask(data[["date","price"]])
     return data
-
-
 
 # *****************************************************
 # ******************* ALL DATES ***********************
 # *****************************************************
 
-def get_all_dates(signal=config["signal"],stock=config["stock"]):
+
+def get_all_dates(signal=config["transatlantic"]["signal"], stock=config["transatlantic"]["stock"]):
     """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
     def extract_date(s):
         try:
