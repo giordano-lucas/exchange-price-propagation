@@ -3,7 +3,8 @@ import glob
 import re
 import numpy as np
 import pandas as pd
-from .preprocessing import preprocessing_pipeline, convert_time
+
+from .preprocessing import *
 import traceback
 
 def file_exist(path):
@@ -28,6 +29,8 @@ def __load_bbo_file(file, preprocessing_steps):
     res = pd.read_parquet(file).rename(
         columns={"bid-price": "bid", "ask-price": "ask"})
     res = convert_time(res)
+    res = to_numeric(res,col="bid")
+    res = to_numeric(res,col="ask")
     res["mid"] = (res.bid + res.ask)/2
     return __format_loaded_df(res, "mid", preprocessing_steps)
 
@@ -44,6 +47,8 @@ def __get_load_file():
     else:
         return __load_bbo_file
 
+ 
+   
 def load_daily_data(date, preprocessing_steps):
     daily_data = {}
     for market in config['markets']['list']:
@@ -61,10 +66,29 @@ def load_daily_data(date, preprocessing_steps):
 
 
 # *****************************************************
+# ******************* DASK ***********************
+# *****************************************************
+
+def load_all_data_dask(market,signal=config["signal"],precision="D"):
+    all_files = glob.glob(f"{config['dir']['data']}/{market}/{signal}/*/*")
+    data = dd.read_parquet(all_files)
+    data = convert_time_dask(data,rounding=precision)
+    
+    if signal=="trade":
+        data = data.rename(columns={"trade-price":"price"})
+    elif signal=="bbo":
+        data["price"] = (data["bid-price"] + data["ask-price"])/2
+    
+    data = to_numeric_dask(data[["date","price"]])
+    return data
+
+
+
+# *****************************************************
 # ******************* ALL DATES ***********************
 # *****************************************************
 
-def get_all_dates(signal,stock='RDSA'):
+def get_all_dates(signal=config["signal"],stock=config["stock"]):
     """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
     def extract_date(s):
         try:

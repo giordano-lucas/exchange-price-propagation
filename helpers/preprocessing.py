@@ -11,6 +11,13 @@ def convert_time(df):
         df["xltime"], unit="d", origin="1899-12-30", utc=True)
     return df
 
+def convert_time_dask(df,rounding=None):
+    df["date"] = dd.to_datetime(df["xltime"], unit="d", origin="1899-12-30", utc=True)
+    if rounding:
+        df["date"] = df["date"].round(rounding)
+    return df
+
+
 def log_returns(x: pd.Series):
     ret = np.log(x).diff().dropna()
     return ret
@@ -35,17 +42,17 @@ def moving_average(x: pd.Series, w=30):
 def replace_inf(df):
     df.replace([np.inf, -np.inf], np.nan).dropna()
  
-def __to_numeric(x,module):
-    x.price = module.to_numeric(x.price, errors="coerce")
+def __to_numeric(x,module,col="price"):
+    x[col] = module.to_numeric(x[col], errors="coerce")
     return x.dropna()
 
-def to_numeric(x: pd.Series):
-    x.price = pd.to_numeric(x.price, errors="coerce")
-    return x 
+def to_numeric(x: pd.Series,col="price"):
+    x[col] = pd.to_numeric(x[col], errors="coerce")
+    return x.dropna()
     #return __to_numeric(x,pd)
 
-def to_numeric_dask(x):
-    return __to_numeric(x,dd)
+def to_numeric_dask(x,col="price"):
+    return __to_numeric(x,dd,col)
 
 #############################################################
 ################### Pipeline transformations ##############
