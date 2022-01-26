@@ -64,29 +64,9 @@ class Loader:
         res = res[res["trade-stringflag"] == "uncategorized"]
         return self.__format_loaded_df(res, "trade-price")
 
-<<<<<<< HEAD
     def __get_load_file(self):
         if config[self.dataset]['signal'] == 'trade':
             return self.__load_trade_file
-=======
-def __get_load_file():
-    if config['signal'] == 'trade':
-        return __load_trade_file
-    else:
-        return __load_bbo_file
-
- 
-   
-def load_daily_data(date, preprocessing_steps):
-    daily_data = {}
-    for market in config['markets']['list']:
-        mkt_suffix = config["markets"]['suffix'][market]
-        path_expr = f"{config['dir']['data']}/{market}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
-        path = glob.glob(path_expr)
-        if len(path) == 0:
-            print(f"missing data : {date} {market}", end="\r")
-            return
->>>>>>> 41b94692885d054474d564fbc92477bfcb8a3dab
         else:
             return self.__load_bbo_file
     
