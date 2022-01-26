@@ -3,7 +3,8 @@ import glob
 import re
 import numpy as np
 import pandas as pd
-from .preprocessing import preprocessing_pipeline, convert_time
+
+from .preprocessing import *
 import traceback
 
 def file_exist(path):
@@ -51,6 +52,8 @@ class Loader:
     def __load_bbo_file(self, file):
         res = self.__get_read_file(file).rename(
             columns={"bid-price": "bid", "ask-price": "ask"})
+        res = to_numeric(res, col="bid")
+        res = to_numeric(res, col="ask")
         res = convert_time(res)
         res["mid"] = (res.bid + res.ask)/2
         return self.__format_loaded_df(res, "mid")
@@ -61,9 +64,29 @@ class Loader:
         res = res[res["trade-stringflag"] == "uncategorized"]
         return self.__format_loaded_df(res, "trade-price")
 
+<<<<<<< HEAD
     def __get_load_file(self):
         if config[self.dataset]['signal'] == 'trade':
             return self.__load_trade_file
+=======
+def __get_load_file():
+    if config['signal'] == 'trade':
+        return __load_trade_file
+    else:
+        return __load_bbo_file
+
+ 
+   
+def load_daily_data(date, preprocessing_steps):
+    daily_data = {}
+    for market in config['markets']['list']:
+        mkt_suffix = config["markets"]['suffix'][market]
+        path_expr = f"{config['dir']['data']}/{market}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
+        path = glob.glob(path_expr)
+        if len(path) == 0:
+            print(f"missing data : {date} {market}", end="\r")
+            return
+>>>>>>> 41b94692885d054474d564fbc92477bfcb8a3dab
         else:
             return self.__load_bbo_file
     
@@ -75,10 +98,29 @@ class Loader:
 
 
 # *****************************************************
+# ******************* DASK ***********************
+# *****************************************************
+
+def load_all_data_dask(market,signal=config["signal"],precision="D"):
+    all_files = glob.glob(f"{config['dir']['data']}/{market}/{signal}/*/*")
+    data = dd.read_parquet(all_files)
+    data = convert_time_dask(data,rounding=precision)
+    
+    if signal=="trade":
+        data = data.rename(columns={"trade-price":"price"})
+    elif signal=="bbo":
+        data["price"] = (data["bid-price"] + data["ask-price"])/2
+    
+    data = to_numeric_dask(data[["date","price"]])
+    return data
+
+
+
+# *****************************************************
 # ******************* ALL DATES ***********************
 # *****************************************************
 
-def get_all_dates(signal,stock='RDSA'):
+def get_all_dates(signal=config["signal"],stock=config["stock"]):
     """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
     def extract_date(s):
         try:
