@@ -18,34 +18,63 @@ files :
                 all_best_lags :  "results/bbo/dask/lags_{}.csv"
             all_best_lags : "results/bbo/lags_{}.csv" 
             liquidity :     "results/bbo/liquidity.csv" 
-signal: bbo
-stock: RDSa
-old_stock: MSFT
-markets: 
-    list:
-        - GB
-        - US
-        - NL
-    suffix:
-        GB : L
-        NL : AS
-        US : N
-  
-  
-distances : 
-    NL :
-        GB: 357
-        US: 5570
-        NL : 0
-    GB: 
-        NL: 357
-        US: 5862
-        GB : 0
-    US:
-        NL: 5570
-        GB: 5862
-        US: 0
+
+US_sample:
+    extension: 'csv'
+    signal: trade
+    stock: MSFT
+    markets:
+        list:
+            - A
+            - B
+            - C
+            - DF
+            - II
+            - MW
+            - O
+            - OQ
+            - P
+            - PH
+            - Z
+        suffix: 
+            A  : A
+            B  : B
+            C  : C
+            DF : DF
+            II : II
+            MW :  MW
+            O  : O
+            OQ : OQ
+            P  : P
+            PH : PH
+            Z  : Z
+transatlantic:
+    extension: 'parquet'
+    signal: trade
+    stock: RDSa
+    markets: 
+        list:
+            - GB
+            - US
+            - NL
+        suffix:
+            GB : L
+            NL : AS
+            US : N
+    distances : 
+        NL :
+            GB: 357
+            US: 5570
+            NL : 0
+        GB: 
+            NL: 357
+            US: 5862
+            GB : 0
+        US:
+            NL: 5570
+            GB: 5862
+            US: 0
         
-test_date: 2010-01-04
+test_date: 2010-01-07
 open_time: 09:30:00
 close_time: 16:00:00

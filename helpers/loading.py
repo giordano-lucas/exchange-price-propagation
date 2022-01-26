@@ -13,51 +13,65 @@ def file_exist(path):
 # ******************** DAILY **************************
 # *****************************************************
 
-def __format_loaded_df(df, col, preprocessing_steps):
-    df = df.rename(columns={col: "price"})
-    series = df[["price", "date"]].drop_duplicates().set_index("date")
-    series = series[~series.index.duplicated(keep='first')]
-    series = preprocessing_pipeline(
-            series,steps=preprocessing_steps )
-    series = series.replace([np.inf, -np.inf], np.nan).dropna()
-    series = series[np.abs(series.price) > 0.0]
-    return series
+class Loader:
+    def __init__(self, preprocessing_steps=['numeric', 'log_returns'], dataset='transatlantic') -> None:
+        self.preprocessing_steps = preprocessing_steps
+        self.dataset = dataset
+        
+    def load_daily_data(self, date):
+        daily_data = {}
+        for market in config[self.dataset]['markets']['list']:
+            mkt_suffix = config[self.dataset]['markets']['suffix'][market]
+            path_expr = f"{config['dir']['data']}/{self.dataset}/{market}/{config[self.dataset]['signal']}/{config[self.dataset]['stock']}.{mkt_suffix}/{date}-*.{config[self.dataset]['extension']}*"
+            path = glob.glob(path_expr)
+            if len(path) == 0:
+                print(f"missing data : market {market} for {date} ")
+                continue
+            else:
+                path = path[0]
+                daily_data[market] = self.__get_load_file()(path)
+
+        return daily_data
+
+    ##########################################
+    ########### Private helper ft ############
+    ##########################################
 
 
-def __load_bbo_file(file, preprocessing_steps):
-    res = pd.read_parquet(file).rename(
-        columns={"bid-price": "bid", "ask-price": "ask"})
-    res = convert_time(res)
-    res["mid"] = (res.bid + res.ask)/2
-    return __format_loaded_df(res, "mid", preprocessing_steps)
+    def __format_loaded_df(self, df, col):
+        df = df.rename(columns={col: "price"})
+        series = df[["price", "date"]].drop_duplicates().set_index("date")
+        series = series[~series.index.duplicated(keep='first')]
+        series = preprocessing_pipeline(
+                series,steps=self.preprocessing_steps)
+        series = series.replace([np.inf, -np.inf], np.nan).dropna()
+        series = series[np.abs(series.price) > 0.0]
+        return series
 
+    def __load_bbo_file(self, file):
+        res = self.__get_read_file(file).rename(
+            columns={"bid-price": "bid", "ask-price": "ask"})
+        res = convert_time(res)
+        res["mid"] = (res.bid + res.ask)/2
+        return self.__format_loaded_df(res, "mid")
 
-def __load_trade_file(file, preprocessing_steps):
-    res = pd.read_parquet(file)
-    res = convert_time(res)
-    res = res[res["trade-stringflag"] == "uncategorized"]
-    return __format_loaded_df(res, "trade-price", preprocessing_steps)
+    def __load_trade_file(self, file):
+        res = self.__get_read_file(file)
+        res = convert_time(res)
+        res = res[res["trade-stringflag"] == "uncategorized"]
+        return self.__format_loaded_df(res, "trade-price")
 
-def __get_load_file():
-    if config['signal'] == 'trade':
-        return __load_trade_file
-    else:
-        return __load_bbo_file
-
-def load_daily_data(date, preprocessing_steps):
-    daily_data = {}
-    for market in config['markets']['list']:
-        mkt_suffix = config["markets"]['suffix'][market]
-        path_expr = f"{config['dir']['data']}/{market}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
-        path = glob.glob(path_expr)
-        if len(path) == 0:
-            print(f"missing data : {date} {market}", end="\r")
-            return
+    def __get_load_file(self):
+        if config[self.dataset]['signal'] == 'trade':
+            return self.__load_trade_file
         else:
-            path = path[0]
-            daily_data[market] = __get_load_file()(path, preprocessing_steps)
- 
-    return daily_data
+            return self.__load_bbo_file
+    
+    def __get_read_file(self, file):
+        if config[self.dataset]['extension'] == 'csv':
+            return pd.read_csv(file, compression='gzip')
+        else:
+            return pd.read_parquet(file)
 
 
 # *****************************************************
