@@ -6,12 +6,19 @@ dir:
 files :
     exchanges_country_suffixes : data/exchanges_country_suffixes.csv
     results:
-        trade : 
+        trade :
+            dask_calculation :
+                all_best_lags : "results/trade/dask/lags_{}.csv"
             all_best_lags : "results/trade/lags_{}.csv" 
             liquidity : "results/trade/liquidity.csv" 
             mean_trade_prices  : "results/trade/mean_trade_prices_{}.csv"
             mean_trade_returns : "results/trade/mean_trade_returns_{}.csv"
-signal: trade
+        bbo :
+            dask_calculation :
+                all_best_lags :  "results/bbo/dask/lags_{}.csv"
+            all_best_lags : "results/bbo/lags_{}.csv" 
+            liquidity :     "results/bbo/liquidity.csv" 
+signal: bbo
 stock: RDSa
 old_stock: MSFT
 markets: 

@@ -40,7 +40,9 @@ def __to_numeric(x,module):
     return x.dropna()
 
 def to_numeric(x: pd.Series):
-    return __to_numeric(x,pd)
+    x.price = pd.to_numeric(x.price, errors="coerce")
+    return x 
+    #return __to_numeric(x,pd)
 
 def to_numeric_dask(x):
     return __to_numeric(x,dd)
