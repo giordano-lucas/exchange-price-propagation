@@ -30,6 +30,23 @@ To conduct this study, we have acess so almost `10 GB` of data. The latter conta
 
 In the code, the `MSFT` dataset is called `US sample`. `RDSA` files are aggregated under the name : `transatlantic dataset`. 
 
+.
+├── data                   # Data folder
+│ ├── markets              # directory containing all financial data
+│ │ ├── transatlantic      # GB, NL and US markets data for RDSA
+│ │ │ ├── GB
+│ │ │ │ ├── bbo
+│ │ │ │ │ ├── RDSA.L
+│ │ │ │ │ │ ├── ...        # example of file
+│ │ │ │ ├── trade          # trade transaction data
+│ │ │ │ │ ├── ...          # example of file
+│ │ ├── US_sample          # US markets data for MSFT
+│ ├── city                 # directory containing a city dataset with geographical coordinates
+│ │ ├── ...                # example of file
+│ ├── names                # directory containing the mapping ID -> name for the different exchanges
+│ │ ├── ...                # example of file
+└── ...                    # rest of files
+
 ## Preprocessing
 
 The first step of our preprocessing journey is to filter out:
@@ -57,6 +74,7 @@ To compare two given signals $$S^1_t$$/$$S^2_t$$ (same stock from exchange 1 and
 |  1       |  corr($$S^1_t$$,$$L_{1}(S^2_t)$$) |
 |  2       |  corr($$S^1_t$$,$$L_{2}(S^2_t)$$) |
 |$$\cdots$$|$$\cdots$$|
+
 ## Hayashi-Yoshida correlation estimator
 
 Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) intraday estimator. Formally, it is defined as follows:
@@ -73,6 +91,12 @@ The $$K_{i,j}$$ matrix imposes structure on how the join between both time serie
 Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
 At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
 [ss](#method)
+
+TODO: Augustin
+
+TODO: Bechmarks 
+
+TODO: Intro to Dask
 
 # Data exploration
 
@@ -101,13 +125,24 @@ We indeed observe a `Dirac` behaviour for this plot which confirms our believes.
 
 # Analysis
 
+## Time plot
+
+TODO: Augustin
+
+## Distance plot 
+
+TODO: Augustin
 ## Interactive visualisation 
+
+TODO: lucas
 
 [is available at this address](https://murmuring-garden-88123.herokuapp.com/)
 
 > **Note**: this application runs of a free container of ***Heroku***, so it may take a couple of seconds to load.
 
 # Further steps
+
+TODO: lucas
 
 We observe large variability in the distribution of lags. This is mainly related to the fact that:
 1. the analysis was only conducted for the `RSDA` stock. 
@@ -116,3 +151,5 @@ We observe large variability in the distribution of lags. This is mainly related
 Averaging the results across multiple stocks shall help reducing the variance of the estimation.
 
 # Conclusion 
+
+TODO: Augustin ou Lucas
