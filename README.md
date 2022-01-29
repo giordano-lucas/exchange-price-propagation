@@ -1,4 +1,8 @@
+<img width="1195" alt="Screenshot 2022-01-29 at 09 13 05" src="https://user-images.githubusercontent.com/43466781/151653463-5805ec78-f73d-4237-939e-3bed2c09e147.png">
+
+
 # Big Data For Finance Project
+
 ---
 
 # Data Specification 
