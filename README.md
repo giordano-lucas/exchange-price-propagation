@@ -1,9 +1,6 @@
-<img width="1665" alt="Screenshot 2021-12-29 at 09 52 48" src="https://user-images.githubusercontent.com/43466781/147644243-f21b52b6-bb45-42fe-848f-7c7f1222646c.png">
 
-
-Exchange Price Propagation Analysis
-
-======
+<img width="1195" alt="Screenshot 2022-01-29 at 09 13 05" src="https://user-images.githubusercontent.com/43466781/151653817-496f27a8-0190-45ac-b420-11e776c34f53.png">
+---
 
 ## Abstract
 
