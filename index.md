@@ -91,7 +91,11 @@ The $$K_{i,j}$$ matrix imposes structure on how the join between both time serie
 Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
 At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
 [ss](#method)
-
+### Peak finding algorithm
+{% Correlation_vs_delay_window_iteration(0)_market(NL_US).html %} 
+{% Correlation_vs_delay_window_iteration(1)_market(NL_US).html %} 
+{% Correlation_vs_delay_window_iteration(2)_market(NL_US).html %}
+{% Correlation_vs_delay_window_iteration(3)_market(NL_US).html %} 
 TODO: Augustin
 
 TODO: Bechmarks 
