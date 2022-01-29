@@ -78,26 +78,26 @@ At this point, we obtain a time series of lags (one per day) that are interprete
 
 ## Descriptive statistics
 
-In this section, statistics on the `transactlantic` dataset are provided 
-
-XXX
+In this section, statistics on the `transactlantic` dataset are provided. In particular, the number of transactions for the different exchanges is computed below:
 
 {% include_relative figures/plotly/nb_transaction_per_exchange.html %}
+
+Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningfull estimates for the correlation.
 
 {% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
 
 ## Visual validation of the method
 
-The 
-- Assymetric cross-correlation functions
+As a first validation steps, we propose to compute the auto-correlation of the `MSFT` stock. From the stylised facts of financial returs, we know that we should observe any serial autocorrelation. Therefore, we would expect to see a `Dirac` function for this plot with a correlation of `1` at lag `0`.
 
-As a first validation steps, we propose to compute the auto-correlation of the 
+{% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_US).html %}
 
-In these plots, we 
+We indeed observe a `Dirac` behaviour for this plot which confirms our believes. A slighly more intersting casei
 
-{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
 
-{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
+{% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_GB).html %}
+
+> **Note**: the shape of these plots are similar to those of the XXX paper. Furthermore, we observe strongly assymetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower that those in the paper. Indeed, the second plot shows a correlation on only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particuarly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low frequency signal to a strong piece-wise step function. In opposition, the high frequnecy log return signal will jaggle around the contant threshold defined by the low frequnecy signal. As a result, it creates artificats that reduce the overall correlation. Hence, it is not surprising to observe a maxmium correlation in the order of `5%` for some liquid-illiquid pairs. 
 
 # Analysis
 
