@@ -86,16 +86,28 @@ where $$K_{i,j} = I\{max(t_{1,i-1}, t_{2,j-1}) < min(t_{1,i}, t_{2,j})\}$$
 An equivalent operation is to use returs $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
 
 The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation.  
-## Optimisation algorithm
+## Lag computation algorithm
 
 Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
 At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
 [ss](#method)
+
+Computations are done via Dask. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a Dask process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
+
+|  CPU |i7-7700 HQ 8 cores   |
+|  RAM |  16GO  |
+
+To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
 ### Peak finding algorithm
-{% Correlation_vs_delay_window_iteration(0)_market(NL_US).html %} 
-{% Correlation_vs_delay_window_iteration(1)_market(NL_US).html %} 
-{% Correlation_vs_delay_window_iteration(2)_market(NL_US).html %}
-{% Correlation_vs_delay_window_iteration(3)_market(NL_US).html %} 
+Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured by the algorithm. However, this setting would yield a high computation time. To solve this issue we decided to develop an iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example : 
+* iteration 0, the lagged correlations are computed using the default `step_size` : 
+{% figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %} 
+
+* iteration 2, we see on the previous iteration that the peak is not centred. Thus the `window` is moved and the
+{% figures/Correlation_vs_delay_window_iteration(1)_market(NL_US).html %} 
+{% figures/Correlation_vs_delay_window_iteration(2)_market(NL_US).html %}
+{%0figures/Correlation_vs_delay_window_iteration(3)_market(NL_US).html %} 
+
 TODO: Augustin
 
 TODO: Bechmarks 
@@ -129,11 +141,28 @@ We indeed observe a `Dirac` behaviour for this plot which confirms our believes.
 
 # Analysis
 
-## Time plot
+## Lags evolution 
+Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. To better compare lags only the absolute value of the lags are shown in the following figure : 
 
-TODO: Augustin
+{% include_relative figures/plotly/lags_trade_60.html %}
+As expected the `lags`/`delays` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`SHELL`). The stock price itself (see next figure) dropped significantly at the same period. Moreover, one can see on `SHELL`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished.
 
+{% include_relative figures/plotly/daily_mean_prices_trade.html %}
+
+TODO : Augustin
 ## Distance plot 
+As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances :
+
+{% include_relative figures/plotly/mean lag vs distance (trade from 2005-00-01 to 2017-12-31).html %}
+We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
+{% include_relative figures/plotly/mean lag vs distance (trade from 2009-06-00 to 2009-08-00).html %}
+ To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter : 
+{% include_relative figures/plotly/evolution_of_beta_parameter.html %}
+ The obtained slopes do not seem to always be positive. Again we notice abnormal activity around 2015/2016.
+
+## Impact of liquidity
+In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point : (|1.5-1||500|) = (0.5,500). The final graph is the following :
+{% include_relative figures/plotly/daily lag vs period_diff (trade).html %}
 
 TODO: Augustin
 ## Interactive visualisation 
@@ -155,5 +184,5 @@ We observe large variability in the distribution of lags. This is mainly related
 Averaging the results across multiple stocks shall help reducing the variance of the estimation.
 
 # Conclusion 
-
+The distance is not the only factor driving the propagation delay
 TODO: Augustin ou Lucas
