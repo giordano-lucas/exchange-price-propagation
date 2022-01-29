@@ -112,6 +112,8 @@ In this section, statistics on the `transactlantic` dataset are provided. In par
 
 {% include_relative figures/plotly/nb_transaction_per_exchange.html %}
 
+As expected, we observe more data points for the `bbo` dataset. Another interesting fact is that the `Amsterdam market` contains more transactions that the `London market` even though the latter is the primary exchange for `Shell`. 
+
 Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningfull estimates for the correlation.
 
 {% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
@@ -161,9 +163,12 @@ TODO: Augustin
 ## Distance plot 
 
 TODO: Augustin
-## Interactive visualisation 
+## More visualisations 
 
-To conclude our projet, we made available another interactive visualisation of the historical maximum lag. It handles the following user actions: 
+### Customisable historical lag
+To conclude our projet, we made available additional interactive visualisations of the computed lags.
+
+The first one is an extended version of the plot shown in [section ***Time Plot***](#time-plot). It handles the following user actions: 
 
 - Select the input data: `bbo` or `trade` prices.
 - Select the averaging window.
@@ -173,16 +178,28 @@ To conclude our projet, we made available another interactive visualisation of t
 The visualation is available [at this address](https://murmuring-garden-88123.herokuapp.com/)
 
 > **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load.
-# Further steps
 
-TODO: lucas
+We could not embed this plot in this website because `GitHub pages` only supports static websites. The resampling and moving averages operations required a dynamic server and we have to use ***Heroku*** in that regard.
+### Propagation speed vs distances on the globe
+
+This last plot aims to provide yet another way of visualising the progation speed. In this form, because only 3 data points are available, the plot is not very usefull. Nevertheless, the code is already setup and could be fed with additional data points at a later stage. We thought this plot has a clear potential and that it would be interesting to start the developpment.
+
+> **Note**: this plot was constructed using the `GeoPandas` library.
+
+# Further steps
 
 We observed substancial variability in the distribution of lags. This is mainly related to the fact that:
 1. the analysis was only conducted for the `RSDA` stock. 
 2. The greedy optimisation algorithm sometimes produces outliers
 
-Averaging the results across multiple stocks shall help reducing the variance of the estimation.
+Averaging the results across multiple stocks shall help reducing the variance of the estimation. 
+
+Finally, one of the intial objectives was to try to reconstruct Moore's from the dataset.
+
+
 
 # Conclusion 
 
 TODO: Augustin ou Lucas
+
+Through this project, we 
