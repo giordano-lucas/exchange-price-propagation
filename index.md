@@ -10,7 +10,7 @@ Let's consider the `Microsoft (MSFT)` stock traded in `A` and `B` markets. The n
 
 This concept is illustrated visually in the following figure: 
 
-{ include figures/plotly/motivation.html }
+{% include_relative figures/plotly/motivation.html %}
 
 Under the `x-axis`, you can find a interactive slider that allows to shift the time series of the stock traded in the XXX exchange (in'`blue`. By hovering the graph, you will be able to observe the `Pearson correlation` coeficient between the two time series.
 
@@ -27,6 +27,8 @@ We expected to see a high correlation between these delays and the distances sep
 ## Description
 
 To conduct this study, we have acess so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitilasation in the `US` stock market when the second represents a stock that is traded both in `europe (London and Amesterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS XXX) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
+
+In the code, the `MSFT` dataset is called `US sample`. `RDSA` files are aggregated under the name : `transatlantic dataset`. 
 
 ## Preprocessing
 
@@ -63,16 +65,39 @@ $$C^{HY} = \sum_i^{n_1} \sum_j^{n_2} (S^1_{t_{1,i}} - S^1_{t_{1,i-1}}) \cdot (S^
 
 where $$K_{i,j} = I\{max(t_{1,i-1}, t_{2,j-1}) < min(t_{1,i}, t_{2,j})\}$$
 
+An equivalent operation is to use returs $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
 
-
-
+The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation.  
 ## Optimisation algorithm
 
-Once computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
+Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available. 
 At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
 [ss](#method)
 
 # Data exploration
+
+## Descriptive statistics
+
+In this section, statistics on the `transactlantic` dataset are provided 
+
+XXX
+
+{% include_relative figures/plotly/nb_transaction_per_exchange.html %}
+
+{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
+
+## Visual validation of the method
+
+The 
+- Assymetric cross-correlation functions
+
+As a first validation steps, we propose to compute the auto-correlation of the 
+
+In these plots, we 
+
+{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
+
+{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
 
 # Analysis
 
@@ -81,7 +106,6 @@ At this point, we obtain a time series of lags (one per day) that are interprete
 [is available at this address](https://murmuring-garden-88123.herokuapp.com/)
 
 > **Note**: this application runs of a free container of ***Heroku***, so it may take a couple of seconds to load.
-
 
 # Further steps
 
