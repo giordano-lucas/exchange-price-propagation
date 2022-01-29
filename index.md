@@ -1,6 +1,6 @@
 # Abstract
 The financial world of equity trading relies on centralized exchanges. These exchanges are disseminated around the globe.
-Thus, it is sometimes possible to trade a share of one given company in multiple regions. Abitrage pricing theory tells us that the price on those exchanges should roughly be equivalent. However, bcause information speed is bounded, shocks on a given share price might take some time to reach all exchanges.
+Thus, it is sometimes possible to trade a share of one given company in multiple regions. Abitrage pricing theory tells us that the price on those exchanges should roughly be equivalent. However, bcause information speed is bounded, shocks on a given share price might take some time to reach all exchanges and be incorporated into the new stock prices.
 
 # Motivation
 
@@ -28,15 +28,17 @@ We expected to see a high correlation between these delays and the distances sep
 
 To conduct this study, we have acess so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitilasation in the `US` stock market when the second represents a stock that is traded both in `europe (London and Amesterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS XXX) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
 
-In the code, the `MSFT` dataset is called `US sample`. `RDSA` files are aggregated under the name : `transatlantic dataset`. 
+In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name : `transatlantic dataset`. 
+
+The following folder organisation is adopted:
 
 .
 ├── data                   # Data folder
 │ ├── markets              # directory containing all financial data
-│ │ ├── transatlantic      # GB, NL and US markets data for RDSA
+│ │ ├── transatlantic      # GB, NL and US markets data for RDSa
 │ │ │ ├── GB
 │ │ │ │ ├── bbo
-│ │ │ │ │ ├── RDSA.L
+│ │ │ │ │ ├── RDSa.L
 │ │ │ │ │ │ ├── ...        # example of file
 │ │ │ │ ├── trade          # trade transaction data
 │ │ │ │ │ ├── ...          # example of file
@@ -50,6 +52,7 @@ In the code, the `MSFT` dataset is called `US sample`. `RDSA` files are aggregat
 ## Preprocessing
 
 The first step of our preprocessing journey is to filter out:
+
 1. **Duplicated transactions**. Note that when two transactions have the time `xtime` but different prices, only the last (group order) will be kept. 
 2. **Non numeric prices**: we noticed that some prices actually contain symbols such as `(`, `)` or `#`. We can not interperet them as numbers, so we chose to remove them from our dataset.
 
@@ -61,29 +64,32 @@ Furthemore, multiple exchange data also imply multiple currencies. However, it i
 
 Finally, for the `BBO` prices, we are only working with the mid price and only non-zero mid prices are considered.
 
-> **Note**: for the readers information, we also considered different alternative preprocessing pipelines in our code such as binary returns (1, -1), moving averages or resampling methods. 
+> **Note**: for the readers information, we also considered different alternative preprocessing pipelines in our code such as binary returns (1, -1), moving averages or resampling methods. They are made available to the user inside the `helpers/preprocessing.py` file.
 
 # Method 
 
 To compare two given signals $$S^1_t$$/$$S^2_t$$ (same stock from exchange 1 and 2), we compute multiple correlations on lagged versions of the signals. Each used lag is then associated with a correlation as follows :
-| lag(ms)  | associated correlation       |
-|----------|------------------------------|
-|$$\cdots$$|$$\cdots$$|
-|  -1      |  corr($$S^1_t$$,$$L_{-1}(S^2_t)$$ |
+
+| lag(ms)  | associated correlation              |
+|----------|-------------------------------------|
+|$$\cdots$$|  $$\cdots$$                         |
+|  -1      |  corr($$S^1_t$$,$$L_{-1}(S^2_t)$$   |
 |  0       |  corr($$S^1_t$$,$$L_{0}(S^2_t)$$)   |
-|  1       |  corr($$S^1_t$$,$$L_{1}(S^2_t)$$) |
-|  2       |  corr($$S^1_t$$,$$L_{2}(S^2_t)$$) |
-|$$\cdots$$|$$\cdots$$|
+|  1       |  corr($$S^1_t$$,$$L_{1}(S^2_t)$$)   |
+|  2       |  corr($$S^1_t$$,$$L_{2}(S^2_t)$$)   |
+|$$\cdots$$|  $$\cdots$$                         |
 
 ## Hayashi-Yoshida correlation estimator
 
-Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) intraday estimator. Formally, it is defined as follows:
+Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) intraday estimator for time series observed only at discrete times in a non-synchronous manner
+
+Formally, it is defined as follows:
 
 $$C^{HY} = \sum_i^{n_1} \sum_j^{n_2} (S^1_{t_{1,i}} - S^1_{t_{1,i-1}}) \cdot (S^2_{t_{2,j}} - S^1_{t_{2,j-1}}) \cdot K_{i,j} = \sum_i^{n_1} \sum_j^{n_2} \Delta S^1_{t_1,i} \cdot \Delta S^2_{t_2,j} \cdot K_{i,j}$$
 
 where $$K_{i,j} = I\{max(t_{1,i-1}, t_{2,j-1}) < min(t_{1,i}, t_{2,j})\}$$
 
-An equivalent operation is to use returs $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
+An equivalent operation is to use returns $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
 
 The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation.  
 ## Optimisation algorithm
@@ -110,18 +116,41 @@ Secondly, the size of the joined time series is shown below. It allows us to ass
 
 {% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
 
+XXXX
+
+Finally, several classical financial statistics are shown in the table below:
+
+| Statistic                                               | vaue              |
+|---------------------------------------------------------|-------------------|
+|the median duration between two consecutive trades       |                   |
+|the average tick size δ in percentage of the midquote    |                   |
+|the average bid/ask spread expressed in tick size        |                   |
+|the frequency of unit bid/ask spread                     |                   |
+
+
+We also give a few information regarding the exchanges considered in this study
+
+| ID    | Name                     | Country        | Trading hours (CET) |   Currency      |
+|-------|--------------------------|----------------|---------------------|-----------------|
+| `.L`  | Amsterdam Stock Exchange | Netherlands    | 09:00-17:30         | EUR             |
+| `.AS` | London Stock Exchange    | United Kingdom | 09:00-17:30         | GBP             |
+| `.N`  | New York Stock Exchange  | USA            | 09:00-17:30         | USD             |
+
 ## Visual validation of the method
 
-As a first validation steps, we propose to compute the auto-correlation of the `MSFT` stock. From the stylised facts of financial returs, we know that we should observe any serial autocorrelation. Therefore, we would expect to see a `Dirac` function for this plot with a correlation of `1` at lag `0`.
+As a first validation steps, we propose to compute the auto-correlation of the `MSFT` stock on the `US` market. From the stylised facts of financial returs, we know that we should observe any serial autocorrelation. Therefore, we would expect to see a `Dirac` function for this plot with a correlation of `1` at lag `0`.
 
 {% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_US).html %}
 
-We indeed observe a `Dirac` behaviour for this plot which confirms our believes. A slighly more intersting casei
-
+We indeed observe a `Dirac` behaviour for this plot which confirms our believes. A slighly more intersting case is the comparision `US - GB` markets of the following plot
 
 {% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_GB).html %}
 
-> **Note**: the shape of these plots are similar to those of the XXX paper. Furthermore, we observe strongly assymetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower that those in the paper. Indeed, the second plot shows a correlation on only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particuarly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low frequency signal to a strong piece-wise step function. In opposition, the high frequnecy log return signal will jaggle around the contant threshold defined by the low frequnecy signal. As a result, it creates artificats that reduce the overall correlation. Hence, it is not surprising to observe a maxmium correlation in the order of `5%` for some liquid-illiquid pairs. 
+Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot.
+ 
+The shape of these plots are similar to those of the XXX paper. Furthermore, we observe strongly assymetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower that those in the paper. Indeed, the second plot shows a correlation on only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particuarly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low frequency signal to a strong piece-wise step function. In opposition, the high frequnecy log return signal will jaggle around the contant threshold defined by the low frequnecy signal. As a result, it creates artificats that reduce the overall correlation. Hence, it is not surprising to observe a maxmium correlation in the order of `5%` for some liquid-illiquid pairs.
+
+Moreover, it is important to notice that the the shape of the plots is largely dependant on the scale of the `x-axis` (e.g. `10 ms`, `10 s` or `100 s`). The larger the scale, the straigher the peak of `Dirac` function. This is relevant to interpret the plots show below and also to be able to compare our results with those of the XXX paper, i.e the authors mostly focus on larger time scales (e.g figure 1 is in trading days).
 
 # Analysis
 
@@ -134,17 +163,21 @@ TODO: Augustin
 TODO: Augustin
 ## Interactive visualisation 
 
-TODO: lucas
+To conclude our projet, we made available another interactive visualisation of the historical maximum lag. It handles the following user actions: 
 
-[is available at this address](https://murmuring-garden-88123.herokuapp.com/)
+- Select the input data: `bbo` or `trade` prices.
+- Select the averaging window.
+- Change the sampling frequency of the signal (daily, weekly, monthly).
+- Zoom in/out in a particular window of the `x-axis`.
 
-> **Note**: this application runs of a free container of ***Heroku***, so it may take a couple of seconds to load.
+The visualation is available [at this address](https://murmuring-garden-88123.herokuapp.com/)
 
+> **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load.
 # Further steps
 
 TODO: lucas
 
-We observe large variability in the distribution of lags. This is mainly related to the fact that:
+We observed substancial variability in the distribution of lags. This is mainly related to the fact that:
 1. the analysis was only conducted for the `RSDA` stock. 
 2. The greedy optimisation algorithm sometimes produces outliers
 
