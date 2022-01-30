@@ -221,11 +221,11 @@ A remarkable result is also the peak located at the end of the year 2015/ beginn
 
 As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances:
 
-XXXXX
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_2005_00_01_2017_12_31.html %}
 
 We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
 
-XXXXX
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_2009_06_00_2009_08_00.html %}
 
 To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
 
