@@ -99,9 +99,9 @@ TODO: error bars
  
 ## Lag computation algorithm
 
-Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available.  At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
+Once we computed the lag associated with the highest correlation, it is extracted and saved. This operation is repeated for each day when the stock was traded and for every pair of exchanges available.  At this point, we obtain a daily time series of lags that can be interpreted as transmission delays of information flows across exchanges. 
 
-Computations are done via Dask. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a Dask process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
+Computations are done using the [Dask](https://dask.org/) framework. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a Dask process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
 
 | Hardware type  | configuration       |
 |----------------|---------------------|
@@ -110,16 +110,13 @@ Computations are done via Dask. Dask allows for distributed computations of prom
 
 To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
 
-### Peak finding algorithm
+## Peak finding algorithm
 
 Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured. However, this setting would yield a high computation time. To solve this issue we decided to develop an greedy iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example. 
 
-#### Algorithm iteration `0`
+### Algorithm iteration `0`
 
 The lagged correlations are computed using the default `step_size`:
 
-{% include_relative figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %}
+{% include_relative figures/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
 
-#### Algorithm iteration `2`
-
-We see on the previous iteration that the peak is not centred. Thus the `window` is moved and the
