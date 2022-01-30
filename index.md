@@ -81,3 +81,29 @@ To compare two given signals $$S^1_t$$/$$S^2_t$$ (same stock from exchange 1 and
 |  2       |  $$corr(S^1_t$$,$$L_{2}(S^2_t))$$   |
 |$$\cdots$$|  $$\cdots$$                         |
 
+## Hayashi-Yoshida correlation estimator
+
+Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) intraday estimator for time series observed only at discrete times in a non-synchronous manner
+
+Formally, it is defined as follows:
+
+$$C^{HY} = \sum_i^{n_1} \sum_j^{n_2} (S^1_{t_{1,i}} - S^1_{t_{1,i-1}}) \cdot (S^2_{t_{2,j}} - S^1_{t_{2,j-1}}) \cdot K_{i,j} = \sum_i^{n_1} \sum_j^{n_2} \Delta S^1_{t_1,i} \cdot \Delta S^2_{t_2,j} \cdot K_{i,j}$$
+
+where $$K_{i,j} = I\{max(t_{1,i-1}, t_{2,j-1}) < min(t_{1,i}, t_{2,j})\}$$
+
+An equivalent operation is to use returns $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
+
+The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation. 
+ 
+## Lag computation algorithm
+
+Once we computed the lag associated with the highest correlation is extracted and saved. This operation is repeated every day the stock was traded and for every pair of exchanges available.  At this point, we obtain a time series of lags (one per day) that are interpreted as transmission delays. 
+
+Computations are done via Dask. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a Dask process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
+
+| Hardware type  | configuration       |
+|----------------|---------------------|
+|  CPU           |i7-7700 HQ 8 cores   |
+|  RAM           |  16GO               |
+
+To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
