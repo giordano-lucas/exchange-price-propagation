@@ -112,4 +112,14 @@ To compute optimal lag for one given date we had to develop a smart peak finding
 
 ### Peak finding algorithm
 
-Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured. However, this setting would yield a high computation time. To solve this issue we decided to develop an greedy iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example : 
+Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured. However, this setting would yield a high computation time. To solve this issue we decided to develop an greedy iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example. 
+
+#### Algorithm iteration `0`
+
+The lagged correlations are computed using the default `step_size`:
+
+{% include_relative figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %}
+
+#### Algorithm iteration `2`
+
+We see on the previous iteration that the peak is not centred. Thus the `window` is moved and the
