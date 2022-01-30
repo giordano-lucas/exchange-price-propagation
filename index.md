@@ -207,7 +207,7 @@ Finally, it is important to notice that the error bars are usually quite large a
 
 Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. These outliers occur because of the simplicy of the [peak finding algorithm](#peak-finding-algorithm-:-a-grid-search-approach) which introduces estimtion errors. For instance, a maximum lag of `10e6` seconds is irrealist and can be discarded. 
 
-{% include_relative figures/plotly/lags_trade_60.html %}
+{% include_relative figures/plotly/absolute_lags_trade_60.html %}
 
 > **Note**: we are only interested in the magnitude of the lags in this plot to be able to ease the comparisions. We decided to plot them in absolute value to reflect this.
 
@@ -221,11 +221,11 @@ A remarkable result is also the peak located at the end of the year 2015/ beginn
 
 As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances:
 
-{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2005-00-01_to_2017-12-31.html %}
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2005_00_01_to_2017_12_31.html %}
 
 We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
 
-{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2009-06-00_to_2009-08-00.html %}
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2009_06_00_to_2009_08_00.html %}
 
 To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
 
