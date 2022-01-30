@@ -289,7 +289,7 @@ Finally, one of the intial objectives was to try to reconstruct Moore's from the
 
 # Conclusion
  
-The distance is not the only factor driving the propagation delay
 TODO: Augustin ou Lucas
 
-Through this project, we 
+Through this project, we expected to find the consequences of Moore's law in the speed of price propagation. We found out that indeed, lag duration decays over the years. However, it appears that the evolution of lags also depends on other factors. In a second time, we studied the effect of distance between markets on their lags. Distance is a constant and we expected it to be negatively correlated with the propagation delays. Nonetheless, the relation between distance and lags evolves over time, during some periods (2007-2010) the correlation is positive (the closer markets are the bigger the lag is) and the relationship becomes negative (from 2017 to 2017). Again, distance does not seem to be the only factor driving propagation delay. As a third factor to investigate, we studied the influence of stock liquidity on the resulting lags. It appears the smaller the liquidity difference between markets is the smaller the lag is.
+During this study, we also noticed that some events such as Shell's bad financial situation in 2015 have a big impact on the lags.
