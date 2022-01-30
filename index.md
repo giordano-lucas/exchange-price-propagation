@@ -10,7 +10,7 @@ Let's consider the `Microsoft (MSFT)` stock traded in `A` and `B` markets. The n
 
 This concept is illustrated visually in the following figure: 
 
-[//]: # "{% include_relative figures/plotly/motivation.html %}"
+% include_relative figures/plotly/motivation.html %
 
 Under the `x-axis`, you can find a interactive slider that allows to shift the time series of the stock traded in the XXX exchange (in'`blue`. By hovering the graph, you will be able to observe the `Pearson correlation` coeficient between the two time series.
 
