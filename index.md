@@ -219,7 +219,7 @@ A remarkable result is also the peak located at the end of the year 2015/ beginn
 
 ## Distance plot 
 
-As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances:
+As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot  (blue dots) the average absolute lags between pairs of exchanges over a given period against the distance separating them. As a result, we obtain 3  data points:  one per pair of markets. In addition to these points, we plot a regression line to outline the trend. One can obtain information about the market pairs using the hover tool on the figures :
 
 {% include_relative figures/plotly/mean_lag_vs_distance_trade_2005_00_01_2017_12_31.html %}
 
@@ -237,7 +237,9 @@ The obtained slopes do not seem to always be positive. Again we notice abnormal 
 
 In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange.The obtained time series evolve as follows: 
 
+
 {% include_relative figures/plotly/daily_mean_prices_trade.html %}
+
 
 The daily median of the period between trades decays over time, meaning that the stock (Shell) is more and more traded. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others.
 
