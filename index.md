@@ -128,13 +128,13 @@ TODO: Intro to Dask
 
 In this section, statistics on the `transactlantic` dataset are provided. In particular, the number of transactions for the different exchanges is computed below:
 
-{% include_relative figures/plotly/nb_transaction_per_exchange.html %}
+[//]: # "{% include_relative figures/plotly/nb_transaction_per_exchange.html %}"
 
 As expected, we observe more data points for the `bbo` dataset. Another interesting fact is that the `Amsterdam market` contains more transactions that the `London market` even though the latter is the primary exchange for `Shell`. 
 
 Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningfull estimates for the correlation.
 
-{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
+[//]: # "{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}"
 
 XXXX
 
