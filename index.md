@@ -179,7 +179,7 @@ Now that the optimal lags are computed and saved, we perform an analysis of the 
 {% include_relative figures/plotly/lags_trade_60.html %}
 As expected the `lags`/`delays` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`SHELL`). The stock price itself (see next figure) dropped significantly at the same period. Moreover, one can see on `SHELL`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished.
 
-{% include_relative figures/plotly/daily_mean_prices_trade.html %}
+[//]: # "{% include_relative figures/plotly/daily_mean_prices_trade.html %}"
 
 TODO : Augustin
 ## Distance plot 
@@ -187,14 +187,19 @@ As mentioned in the previous section, comparing the lags with the distances sepa
 
 {% include_relative figures/plotly/mean lag vs distance (trade from 2005-00-01 to 2017-12-31).html %}
 We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
-{% include_relative figures/plotly/mean lag vs distance (trade from 2009-06-00 to 2009-08-00).html %}
- To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter : 
-{% include_relative figures/plotly/evolution_of_beta_parameter.html %}
- The obtained slopes do not seem to always be positive. Again we notice abnormal activity around 2015/2016.
+
+[//]: # "{% include_relative figures/plotly/mean lag vs distance (trade from 2009-06-00 to 2009-08-00).html %}"
+
+To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
+
+[//]: # "{% include_relative figures/plotly/evolution_of_beta_parameter.html %}"
+
+The obtained slopes do not seem to always be positive. Again we notice abnormal activity around 2015/2016.
 
 ## Impact of liquidity
-In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point : (|1.5-1||500|) = (0.5,500). The final graph is the following :
-{% include_relative figures/plotly/daily lag vs period_diff (trade).html %}
+In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: (|1.5-1||500|) = (0.5,500). The final graph is the following:
+
+[//]: # "{% include_relative figures/plotly/daily lag vs period_diff (trade).html %}"
 
 TODO: Augustin
 ## More visualisations 
@@ -229,8 +234,6 @@ We observed substancial variability in the distribution of lags. This is mainly 
 Averaging the results across multiple stocks shall help reducing the variance of the estimation. 
 
 Finally, one of the intial objectives was to try to reconstruct Moore's from the dataset.
-
-
 
 # Conclusion 
 The distance is not the only factor driving the propagation delay
