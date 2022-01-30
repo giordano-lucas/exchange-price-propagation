@@ -81,6 +81,8 @@ To compare two given signals $$S^1_t$$ and $$S^2_t$$ (same stock from exchange 1
 |  2       |  $$corr(S^1_t$$,$$L_{2}(S^2_t))$$   |
 |$$\cdots$$|  $$\cdots$$                         |
 
+> **Note**: in the following paragraphs, the terms `lag` and `delay` are used interchangebly and represent the same concept.
+
 ## Hayashi-Yoshida correlation estimator
 
 Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) covariance estimator for intraday time series observed only at discrete times in a non-synchronous manner.
@@ -95,8 +97,7 @@ An equivalent operation is to use returns $$R^1_t$$ and $$R^2_t$$ instead of the
 
 The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation. On the joined time series, the `C^{HY}` estimator simply corresponds to a `Pearson` correlation.
 
-TODO: error bars 
- 
+Since, we are using `Pearson` correlation under the hood, it is straighforward to associate `95%` confidence intervals to our estimations (see [article](https://faculty.washington.edu/gloftus/P317-318/Useful_Information/r_to_z/PearsonrCIs.pdf)). In all of plots involving a correlation measure, we display confidence intervals that are interpreted as error-bars. 
 ## Lag computation algorithm
 
 Once we computed the lag associated with the highest correlation, it is extracted and saved. This operation is repeated for each day when the stock was traded and for every pair of exchanges available.  At this point, we obtain a daily time series of lags that can be interpreted as transmission delays of information flows across exchanges. 
@@ -190,31 +191,35 @@ We indeed observe a `Dirac` behaviour for this plot which confirms our believes.
 
 {% include_relative figures/plotly/Correlation_vs_lag_iteration_0_market_US_GB.html %}
 
-Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot.
+Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot. Furthermore, we observe higher variability for other lags than `0` compared to the previous plot.
  
 The shape of these plots are similar to those of the XXX paper. Furthermore, we observe strongly assymetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower that those in the paper. Indeed, the second plot shows a correlation on only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particuarly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low frequency signal to a strong piece-wise step function. In opposition, the high frequnecy log return signal will jaggle around the contant threshold defined by the low frequnecy signal. As a result, it creates artificats that reduce the overall correlation. Hence, it is not surprising to observe a maxmium correlation in the order of `5%` for some liquid-illiquid pairs.
 
 Moreover, it is important to notice that the the shape of the plots is largely dependant on the scale of the `x-axis` (e.g. `10 ms`, `10 s` or `100 s`). The larger the scale, the straigher the peak of `Dirac` function. This is relevant to interpret the plots show below and also to be able to compare our results with those of the XXX paper, i.e the authors mostly focus on larger time scales (e.g figure 1 is in trading days).
 
+Finally, it is important to notice that the error bars are usually quite large and multiple overlaps occur. Therefore, expect for the peak at `0` there is no statistical evidence that the correlation estimates are different. 
+
+> **Note**: to keep our optimisation algorithm simple and fast, we do not consider error bars. As a result, the maximum lag estimation is not as robust as it could be.
 
 # Analysis
 
 ## Lags evolution 
 
-Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. To better compare lags only the absolute value of the lags are shown in the following figure : 
+Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. These outliers occur because of the simplicy of the [peak finding algorithm](#peak-finding-algorithm-:-a-grid-search-approach) which introduces estimtion errors. For instance, a maximum lag of `10e6` seconds is irrealist and can be discarded. 
 
 {% include_relative figures/plotly/lags_trade_60.html %}
 
-As expected the `lags`/`delays` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`SHELL`). The stock price itself (see next figure) dropped significantly at the same period. Moreover, one can see on `SHELL`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished.
+> **Note**: we are only interested in the magnitude of the lags in this plot to be able to ease the comparisions. We decided to plot them in absolute value to reflect this.
+
+As expected the `lags` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. 
+
+A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`Shell`). The stock price itself (see next figure) dropped significantly at the same period. Moreover, one can see on `Shell`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished. For the reader's information, the historical daily stock price of `Shell` is ploted below. We can observe a instability period in 2014-2016.
 
 {% include_relative figures/plotly/daily_mean_prices_trade.html %}
 
-TODO : Augustin
-
-
 ## Distance plot 
 
-As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances :
+As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances:
 
 {% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2005-00-01_to_2017-12-31.html %}
 
@@ -230,7 +235,7 @@ The obtained slopes do not seem to always be positive. Again we notice abnormal 
 
 ## Impact of liquidity
 
-In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: (|1.5-1||500|) = (0.5,500). The final graph is the following:
+In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: $$(\mid 1.5-1 \mid \cdot \mid 500 \mid) = (0.5,500)$$. The final graph is the following:
 
 {% include_relative figures/plotly/daily_lag_vs_period_diff_trade.html %}
 
