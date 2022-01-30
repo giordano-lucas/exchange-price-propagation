@@ -210,3 +210,68 @@ As expected the `lags`/`delays` are globally decaying over the years. However, i
 {% include_relative figures/plotly/daily_mean_prices_trade.html %}
 
 TODO : Augustin
+
+
+## Distance plot 
+
+As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances :
+
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2005-00-01_to_2017-12-31.html %}
+
+We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
+
+{% include_relative figures/plotly/mean_lag_vs_distance_trade_from_2009-06-00_to_2009-08-00.html %}
+
+To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
+
+{% include_relative figures/plotly/evolution_of_beta_parameter.html %}
+
+The obtained slopes do not seem to always be positive. Again we notice abnormal activity around 2015/2016.
+
+## Impact of liquidity
+
+In the previous section we found out that distance is not the only factor dring lag durations. IN this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The NYSE with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `perdiod` between trades for each exchange. Then using the obtained time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: (|1.5-1||500|) = (0.5,500). The final graph is the following:
+
+{% include_relative figures/plotly/daily_lag_vs_period_diff_trade.html %}
+
+TODO: Augustin
+## More visualisations 
+
+### Customisable historical lag
+
+To conclude our projet, we made available additional interactive visualisations of the computed lags.
+
+The first one is an extended version of the plot shown in [section ***Time Plot***](#time-plot). It handles the following user actions: 
+
+- Select the input data: `bbo` or `trade` prices.
+- Select the averaging window.
+- Change the sampling frequency of the signal (daily, weekly, monthly).
+- Zoom in/out in a particular window of the `x-axis`.
+
+The visualation is available [at this address](https://murmuring-garden-88123.herokuapp.com/)
+
+> **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load.
+
+We could not embed this plot in this website because `GitHub pages` only supports static websites. The resampling and moving averages operations required a dynamic server and we have to use ***Heroku*** in that regard.
+### Propagation speed vs distances on the globe
+
+This last plot aims to provide yet another way of visualising the progation speed. In this form, because only 3 data points are available, the plot is not very usefull. Nevertheless, the code is already setup and could be fed with additional data points at a later stage. We thought this plot has a clear potential and that it would be interesting to start the developpment.
+
+> **Note**: this plot was constructed using the `GeoPandas` library.
+
+# Further steps
+
+We observed substancial variability in the distribution of lags. This is mainly related to the fact that:
+1. the analysis was only conducted for the `RSDA` stock. 
+2. The greedy optimisation algorithm sometimes produces outliers
+
+Averaging the results across multiple stocks shall help reducing the variance of the estimation. 
+
+Finally, one of the intial objectives was to try to reconstruct Moore's from the dataset.
+
+# Conclusion
+ 
+The distance is not the only factor driving the propagation delay
+TODO: Augustin ou Lucas
+
+Through this project, we 
