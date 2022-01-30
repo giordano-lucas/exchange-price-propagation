@@ -110,13 +110,37 @@ Computations are done using the [Dask](https://dask.org/) framework. Dask allows
 
 To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
 
-## Peak finding algorithm
+## Peak finding algorithm : a grid search approach
 
-Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured. However, this setting would yield a high computation time. To solve this issue we decided to develop an greedy iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example. 
+To find the lag corresponding to the maximum correlation value, we follow a grid search approach. In other words, we:
 
-### Algorithm iteration `0`
+1. Select a range of possible lag values.
+1. Compute the correlation for each of them.
+1. Report the `argmax` of the correlation array.
 
-The lagged correlations are computed using the default `step_size`:
+However, this approach raises multiple challenges: one has to choose a `step_size` for the lags range as well as an exploration `window` to iterate over (e.g. $$[-20 \; ms, +350 \; ms]$$).  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will always ensure that the true peak is captured. However, this setting yiels a high computation time since we can possibly explorations irrelevant regions of the parameter space. 
 
-{% include_relative figures/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
+To speed up the this process, we developed a greedy algorithm that dynamically updates the `step_size` and `window` parameters. We start with a guess and iterate until convergence. It follows the following set of requirements:
 
+1. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction.
+2. In the other case (not strictly increasing), the algorithm centers the `window ` to the current identified peak (there must be such a peak otherwise the function is increasing) and reduces  the `step_size` (`-50%`). 
+
+This algorithm is better illustrated in the following example. 
+
+At iteration `0`, The lagged correlations are computed using the default `step_size`:
+
+{% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
+
+We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is centered and the
+
+{% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_1_market_NL_US.html %}
+
+{% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_2_market_NL_US.html %}
+
+{% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_3_market_NL_US.html %}
+
+TODO: Augustin
+
+TODO: Bechmarks 
+
+TODO: Intro to Dask
