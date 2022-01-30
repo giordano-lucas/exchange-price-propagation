@@ -101,14 +101,14 @@ TODO: error bars
 
 Once we computed the lag associated with the highest correlation, it is extracted and saved. This operation is repeated for each day when the stock was traded and for every pair of exchanges available.  At this point, we obtain a daily time series of lags that can be interpreted as transmission delays of information flows across exchanges. 
 
-Computations are done using the [Dask](https://dask.org/) framework. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a Dask process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
+Computations are done using the [Dask](https://dask.org/) framework. Dask allows for distributed computations of promise functions. All the dates to process are split into  `k` partitions. Each partition is then fed to a `Dask` process. The process iterates over the dates of the given partition and every time a date is processed it writes the results in a dedicated file (one file is produced per partition). By doing so, it is possible to stop the computation and restart it later, the task function does process date for which there already exists results in the file. It takes around 1h to process the `trade` data and 1h30 to process `bbo` data. These computations were done on our personal computer having the following characteristics :
 
 | Hardware type  | configuration       |
 |----------------|---------------------|
 |  CPU           |i7-7700 HQ 8 cores   |
 |  RAM           |  16GO               |
 
-To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
+To compute optimal lag for one given date, we need to run a peak finding optimisation algorithm.
 
 ## Peak finding algorithm : a grid search approach
 
@@ -123,7 +123,7 @@ However, this approach raises multiple challenges: one has to choose a `step_siz
 To speed up the this process, we developed a greedy algorithm that dynamically updates the `step_size` and `window` parameters. We start with a guess and iterate until convergence. It follows the following set of requirements:
 
 1. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction.
-2. In the other case (not strictly increasing), the algorithm centers the `window ` to the current identified peak (there must be such a peak otherwise the function is increasing) and reduces  the `step_size` (`-50%`). 
+1. In the other case (not strictly increasing), the algorithm centers the `window ` to the current identified peak (there must be such a peak otherwise the function is increasing) and reduces  the `step_size` (`-50%`). 
 
 This algorithm is better illustrated in the following example. 
 
@@ -131,7 +131,7 @@ At iteration `0`, The lagged correlations are computed using the default `step_s
 
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
 
-We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is centered and the
+We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is centered and the XXX
 
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_1_market_NL_US.html %}
 
@@ -144,3 +144,55 @@ TODO: Augustin
 TODO: Bechmarks 
 
 TODO: Intro to Dask
+
+
+# Data exploration
+
+## Descriptive statistics
+
+In this section, statistics on the `transactlantic` dataset are provided. In particular, the number of transactions for the different exchanges is computed below:
+
+{% include_relative figures/plotly/nb_transaction_per_exchange.html %}
+
+As expected, we observe more data points for the `bbo` dataset. Another interesting fact is that the `Amsterdam market` contains more transactions that the `London market` even though the latter is the primary exchange for `Shell`. 
+
+Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningfull estimates for the correlation.
+
+{% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
+
+XXXX
+
+Finally, several classical financial statistics are shown in the table below:
+
+| Statistic                                               | vaue              |
+|---------------------------------------------------------|-------------------|
+|the median duration between two consecutive trades       |                   |
+|the average tick size δ in percentage of the midquote    |                   |
+|the average bid/ask spread expressed in tick size        |                   |
+|the frequency of unit bid/ask spread                     |                   |
+
+
+We also give a few information regarding the exchanges considered in this study
+
+| ID    | Name                     | Country        | Trading hours (CET) |   Currency      |
+|-------|--------------------------|----------------|---------------------|-----------------|
+| `.L`  | Amsterdam Stock Exchange | Netherlands    | 09:00-17:30         | EUR             |
+| `.AS` | London Stock Exchange    | United Kingdom | 09:00-17:30         | GBP             |
+| `.N`  | New York Stock Exchange  | USA            | 09:00-17:30         | USD             |
+
+## Visual validation of the method
+
+As a first validation steps, we propose to compute the auto-correlation of the `MSFT` stock on the `US` market. From the stylised facts of financial returs, we know that we should observe any serial autocorrelation. Therefore, we would expect to see a `Dirac` function for this plot with a correlation of `1` at lag `0`.
+
+{%  include_relative figures/plotly/Correlation_vs_lag_iteration_0_market_US_US.html %}
+
+We indeed observe a `Dirac` behaviour for this plot which confirms our believes. A slighly more intersting case is the comparision `US - GB` markets of the following plot
+
+
+{% include_relative figures/plotly/Correlation_vs_lag_iteration_0_market_US_GB.html %}
+
+Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot.
+ 
+The shape of these plots are similar to those of the XXX paper. Furthermore, we observe strongly assymetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower that those in the paper. Indeed, the second plot shows a correlation on only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particuarly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low frequency signal to a strong piece-wise step function. In opposition, the high frequnecy log return signal will jaggle around the contant threshold defined by the low frequnecy signal. As a result, it creates artificats that reduce the overall correlation. Hence, it is not surprising to observe a maxmium correlation in the order of `5%` for some liquid-illiquid pairs.
+
+Moreover, it is important to notice that the the shape of the plots is largely dependant on the scale of the `x-axis` (e.g. `10 ms`, `10 s` or `100 s`). The larger the scale, the straigher the peak of `Dirac` function. This is relevant to interpret the plots show below and also to be able to compare our results with those of the XXX paper, i.e the authors mostly focus on larger time scales (e.g figure 1 is in trading days).
