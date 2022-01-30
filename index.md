@@ -158,11 +158,12 @@ We also give a few information regarding the exchanges considered in this study
 
 As a first validation steps, we propose to compute the auto-correlation of the `MSFT` stock on the `US` market. From the stylised facts of financial returs, we know that we should observe any serial autocorrelation. Therefore, we would expect to see a `Dirac` function for this plot with a correlation of `1` at lag `0`.
 
-{% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_US).html %}
+[//]: # "{%  include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_US).html %}"
 
 We indeed observe a `Dirac` behaviour for this plot which confirms our believes. A slighly more intersting case is the comparision `US - GB` markets of the following plot
 
-{% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_GB).html %}
+
+[//]: # "{% include_relative figures/plotly/Correlation_vs_lag_iteration(0)_market(US_GB).html %}"
 
 Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot.
  
