@@ -107,7 +107,8 @@ To compute optimal lag for one given date we had to develop a smart peak finding
 ### Peak finding algorithm
 Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured by the algorithm. However, this setting would yield a high computation time. To solve this issue we decided to develop an iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example : 
 * iteration 0, the lagged correlations are computed using the default `step_size` : 
-{% figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %} 
+
+[//]: # "{% figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %}"
 
 * iteration 2, we see on the previous iteration that the peak is not centred. Thus the `window` is moved and the
 
@@ -177,7 +178,8 @@ Moreover, it is important to notice that the the shape of the plots is largely d
 ## Lags evolution 
 Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. To better compare lags only the absolute value of the lags are shown in the following figure : 
 
-{% include_relative figures/plotly/lags_trade_60.html %}
+[//]: # "{% include_relative figures/plotly/lags_trade_60.html %}"
+
 As expected the `lags`/`delays` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`SHELL`). The stock price itself (see next figure) dropped significantly at the same period. Moreover, one can see on `SHELL`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished.
 
 [//]: # "{% include_relative figures/plotly/daily_mean_prices_trade.html %}"
