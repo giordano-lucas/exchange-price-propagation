@@ -10,7 +10,7 @@ Let's consider the `Microsoft (MSFT)` stock traded in `A` and `B` markets. The n
 
 This concept is illustrated visually in the following figure: 
 
-{% include_relative figures/plotly/motivation.html %}
+[//]: # "{% include_relative figures/plotly/motivation.html %}"
 
 Under the `x-axis`, you can find a interactive slider that allows to shift the time series of the stock traded in the XXX exchange (in'`blue`. By hovering the graph, you will be able to observe the `Pearson correlation` coeficient between the two time series.
 
@@ -110,9 +110,10 @@ Finding the highest lagged correlation raises multiple challenges: one has to ch
 {% figures/Correlation_vs_delay_window_iteration(0)_market(NL_US).html %} 
 
 * iteration 2, we see on the previous iteration that the peak is not centred. Thus the `window` is moved and the
-{% figures/Correlation_vs_delay_window_iteration(1)_market(NL_US).html %} 
-{% figures/Correlation_vs_delay_window_iteration(2)_market(NL_US).html %}
-{%0figures/Correlation_vs_delay_window_iteration(3)_market(NL_US).html %} 
+
+[//]: # "{% figures/Correlation_vs_delay_window_iteration(1)_market(NL_US).html %}"
+[//]: # "{% figures/Correlation_vs_delay_window_iteration(2)_market(NL_US).html %}"
+[//]: # "{% figures/Correlation_vs_delay_window_iteration(3)_market(NL_US).html %}"
 
 TODO: Augustin
 
@@ -185,7 +186,8 @@ TODO : Augustin
 ## Distance plot 
 As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot the average absolute lags between pairs of exchanges over a given period against the separating distances :
 
-{% include_relative figures/plotly/mean lag vs distance (trade from 2005-00-01 to 2017-12-31).html %}
+[//]: # "{% include_relative figures/plotly/mean lag vs distance (trade from 2005-00-01 to 2017-12-31).html %}"
+
 We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
 
 [//]: # "{% include_relative figures/plotly/mean lag vs distance (trade from 2009-06-00 to 2009-08-00).html %}"
