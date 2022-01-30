@@ -14,62 +14,74 @@ def file_exist(path):
 # ******************** DAILY **************************
 # *****************************************************
 
-def __format_loaded_df(df, col, preprocessing_steps):
-    df = df.rename(columns={col: "price"})
-    series = df[["price", "date"]].drop_duplicates().set_index("date")
-    series = series[~series.index.duplicated(keep='first')]
-    series = preprocessing_pipeline(
-            series,steps=preprocessing_steps )
-    series = series.replace([np.inf, -np.inf], np.nan).dropna()
-    series = series[np.abs(series.price) > 0.0]
-    return series
+class Loader:
+    def __init__(self, preprocessing_steps=['numeric', 'log_returns'], dataset='transatlantic') -> None:
+        self.preprocessing_steps = preprocessing_steps
+        self.dataset = dataset
+        
+    def load_daily_data(self, date):
+        daily_data = {}
+        for market in config[self.dataset]['markets']['list']:
+            mkt_suffix = config[self.dataset]['markets']['suffix'][market]
+            path_expr = f"{config['dir']['data']}/{self.dataset}/{market}/{config[self.dataset]['signal']}/{config[self.dataset]['stock']}.{mkt_suffix}/{date}-*.{config[self.dataset]['extension']}*"
+            path = glob.glob(path_expr)
+            if len(path) == 0:
+                print(f"missing data : market {market} for {date} ")
+                continue
+            else:
+                path = path[0]
+                daily_data[market] = self.__get_load_file()(path)
+
+        return daily_data
+
+    ##########################################
+    ########### Private helper ft ############
+    ##########################################
 
 
-def __load_bbo_file(file, preprocessing_steps):
-    res = pd.read_parquet(file).rename(
-        columns={"bid-price": "bid", "ask-price": "ask"})
-    res = convert_time(res)
-    res = to_numeric(res,col="bid")
-    res = to_numeric(res,col="ask")
-    res["mid"] = (res.bid + res.ask)/2
-    return __format_loaded_df(res, "mid", preprocessing_steps)
+    def __format_loaded_df(self, df, col):
+        df = df.rename(columns={col: "price"})
+        series = df[["price", "date"]].drop_duplicates().set_index("date")
+        series = series[~series.index.duplicated(keep='first')]
+        series = preprocessing_pipeline(
+                series,steps=self.preprocessing_steps)
+        series = series.replace([np.inf, -np.inf], np.nan).dropna()
+        series = series[np.abs(series.price) > 0.0]
+        return series
 
+    def __load_bbo_file(self, file):
+        res = self.__get_read_file(file).rename(
+            columns={"bid-price": "bid", "ask-price": "ask"})
+        res = to_numeric(res, col="bid")
+        res = to_numeric(res, col="ask")
+        res = convert_time(res)
+        res["mid"] = (res.bid + res.ask)/2
+        return self.__format_loaded_df(res, "mid")
 
-def __load_trade_file(file, preprocessing_steps):
-    res = pd.read_parquet(file)
-    res = convert_time(res)
-    res = res[res["trade-stringflag"] == "uncategorized"]
-    return __format_loaded_df(res, "trade-price", preprocessing_steps)
+    def __load_trade_file(self, file):
+        res = self.__get_read_file(file)
+        res = convert_time(res)
+        res = res[res["trade-stringflag"] == "uncategorized"]
+        return self.__format_loaded_df(res, "trade-price")
 
-def __get_load_file():
-    if config['signal'] == 'trade':
-        return __load_trade_file
-    else:
-        return __load_bbo_file
-
- 
-   
-def load_daily_data(date, preprocessing_steps):
-    daily_data = {}
-    for market in config['markets']['list']:
-        mkt_suffix = config["markets"]['suffix'][market]
-        path_expr = f"{config['dir']['data']}/{market}/{config['signal']}/{config['stock']}.{mkt_suffix}/{date}*"
-        path = glob.glob(path_expr)
-        if len(path) == 0:
-            print(f"missing data : {date} {market}", end="\r")
-            return
+    def __get_load_file(self):
+        if config[self.dataset]['signal'] == 'trade':
+            return self.__load_trade_file
         else:
-            path = path[0]
-            daily_data[market] = __get_load_file()(path, preprocessing_steps)
- 
-    return daily_data
+            return self.__load_bbo_file
+    
+    def __get_read_file(self, file):
+        if config[self.dataset]['extension'] == 'csv':
+            return pd.read_csv(file, compression='gzip')
+        else:
+            return pd.read_parquet(file)
 
 
 # *****************************************************
 # ******************* DASK ***********************
 # *****************************************************
 
-def load_all_data_dask(market,signal=config["signal"],precision="D"):
+def load_all_data_dask(market, signal=config["transatlantic"]["signal"], precision="D"):
     all_files = glob.glob(f"{config['dir']['data']}/{market}/{signal}/*/*")
     data = dd.read_parquet(all_files)
     data = convert_time_dask(data,rounding=precision)
@@ -78,17 +90,16 @@ def load_all_data_dask(market,signal=config["signal"],precision="D"):
         data = data.rename(columns={"trade-price":"price"})
     elif signal=="bbo":
         data["price"] = (data["bid-price"] + data["ask-price"])/2
-    
+
     data = to_numeric_dask(data[["date","price"]])
     return data
-
-
 
 # *****************************************************
 # ******************* ALL DATES ***********************
 # *****************************************************
 
-def get_all_dates(signal=config["signal"],stock=config["stock"]):
+
+def get_all_dates(signal=config["transatlantic"]["signal"], stock=config["transatlantic"]["stock"]):
     """return a sorted list of all dates were trades/bbo (signal) are available in the data"""
     def extract_date(s):
         try:
