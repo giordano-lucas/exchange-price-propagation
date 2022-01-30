@@ -70,7 +70,7 @@ Finally, for the `BBO` prices, we are only working with the mid price and only n
 
 # Method 
 
-To compare two given signals $$S^1_t$$/$$S^2_t$$ (same stock from exchange 1 and 2), we compute multiple correlations on lagged versions of the signals. Each used lag is then associated with a correlation as follows :
+To compare two given signals $$S^1_t$$ and $$S^2_t$$ (same stock from exchange 1 and 2), we compute multiple correlations on lagged versions of the signals. Each used lag is then associated with a correlation measure as summarised in the following table.
 
 | lag(ms)  | associated correlation              |
 |----------|-------------------------------------|
@@ -83,9 +83,9 @@ To compare two given signals $$S^1_t$$/$$S^2_t$$ (same stock from exchange 1 and
 
 ## Hayashi-Yoshida correlation estimator
 
-Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) intraday estimator for time series observed only at discrete times in a non-synchronous manner
+Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) covariance estimator for intraday time series observed only at discrete times in a non-synchronous manner.
 
-Formally, it is defined as follows:
+Formally, is defined as follows:
 
 $$C^{HY} = \sum_i^{n_1} \sum_j^{n_2} (S^1_{t_{1,i}} - S^1_{t_{1,i-1}}) \cdot (S^2_{t_{2,j}} - S^1_{t_{2,j-1}}) \cdot K_{i,j} = \sum_i^{n_1} \sum_j^{n_2} \Delta S^1_{t_1,i} \cdot \Delta S^2_{t_2,j} \cdot K_{i,j}$$
 
@@ -93,7 +93,9 @@ where $$K_{i,j} = I\{max(t_{1,i-1}, t_{2,j-1}) < min(t_{1,i}, t_{2,j})\}$$
 
 An equivalent operation is to use returns $$R^1_t$$ and $$R^2_t$$ instead of the price changes.
 
-The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation. 
+The $$K_{i,j}$$ matrix imposes structure on how the join between both time series is computed. In practical applications, we may think of it as an `outer` join followed by the `formward fill` operation. On the joined time series, the `C^{HY}` estimator simply corresponds to a `Pearson` correlation.
+
+TODO: error bars 
  
 ## Lag computation algorithm
 
@@ -107,3 +109,7 @@ Computations are done via Dask. Dask allows for distributed computations of prom
 |  RAM           |  16GO               |
 
 To compute optimal lag for one given date we had to develop a smart peak finding algorithm.
+
+### Peak finding algorithm
+
+Finding the highest lagged correlation raises multiple challenges: one has to choose a `step_size` for the lags, one also need to choose an exploration `window` to iterate over.  These choices have an important impact on the computation time and the obtained performances: choosing a wide `window` and a small `step_size` will ensure that the true peak is captured. However, this setting would yield a high computation time. To solve this issue we decided to develop an greedy iterative algorithm that uses a fixed `window` size but modifies the `step_size` and recenter the `window` if necessary. If the lagged correlation function appears to be increasing in one direction, the algorithm increases the `step_size` (`+50%`) and moves the `window` toward that direction. In the other case (not strictly increasing), the algorithm centers the `window ` to the identified peak (there must be such a peak otherwise the function is increasing) and reduces (`-50%`) the `step_size`. This algorithm is better illustrated in the following example : 
