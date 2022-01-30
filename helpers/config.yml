@@ -20,7 +20,7 @@ files :
                 liquidity : "results/bbo/dask/liquidity_{}.csv" 
             all_best_lags : "results/bbo/lags_{}.csv" 
             liquidity :     "results/bbo/liquidity.csv" 
-signal: bbo
+signal: trade
 stock: RDSa
 old_stock: MSFT
 markets: 
