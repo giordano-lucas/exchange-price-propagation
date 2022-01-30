@@ -21,3 +21,49 @@ As expected, the general dynamics underlying the stochastic processes are almost
 We expected to see a high correlation between these delays and the distances separating exchanges. For example, the delays between `NYSE` and `Euronext` should be higher than `NYSE` and `Nasdaq`. When analyzing these delays over multiple years we also expect the delays to:
 1. Decrease over time due to the increase in hardware capabilities. More specifically, Moore's law tells us that the transmission speed of information doubles every year. Thus, the delays should, theoratically, decay exponentially over time.
 2. Increase with the physical distance between the exchanges.
+
+
+# Dataset
+
+## Description
+
+To conduct this study, we have acess so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitilasation in the `US` stock market when the second represents a stock that is traded both in `europe (London and Amesterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS XXX) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
+
+In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name : `transatlantic dataset`. 
+
+The following folder organisation is adopted:
+
+    .
+    ├── data                   # Data folder
+    │ ├── markets              # directory containing all financial data
+    │ │ ├── transatlantic      # GB, NL and US markets data for RDSa
+    │ │ │ ├── GB
+    │ │ │ │ ├── bbo
+    │ │ │ │ │ ├── RDSa.L
+    │ │ │ │ │ │ ├── ...        # example of file
+    │ │ │ │ ├── trade          # trade transaction data
+    │ │ │ │ │ ├── ...          # example of file
+    │ │ ├── US_sample          # US markets data for MSFT
+    │ ├── city                 # directory containing a city dataset with geographical coordinates
+    │ │ ├── ...                # example of file
+    │ ├── names                # directory containing the mapping ID -> name for the different exchanges
+    │ │ ├── ...                # example of file
+    └── ...                    # rest of files
+
+## Preprocessing
+
+The first step of our preprocessing journey is to filter out:
+
+1. **Duplicated transactions**. Note that when two transactions have the time `xtime` but different prices, only the last (group order) will be kept. 
+2. **Non numeric prices**: we noticed that some prices actually contain symbols such as `(`, `)` or `#`. We can not interperet them as numbers, so we chose to remove them from our dataset.
+
+Usually, when it comes to multi-exchanges intrady data, time-zones are always . However, in this case, we draw the attention of the reader to the fact that: for a stock price under $$GTM+x$$ time zone, we should have $$S_t \mid GTM+x$$ $$ \approx S_t \mid GTM+y, \; \forall_{x,y}$$ in order not to observe an arbtrage opportunity. This observation tells us that, we shouldn't normalise the time zones of our dataset. Conceptually, when a action (news, transaction, etc.) influencing the stock price occurs at time $$t$$ it should be incorporated simultaneously accross all exchanges roughly at the time $$t$$, irrespectively of the time zone. Actually, when two time time series are merged, only the overlapping time window shall be considered. 
+
+As a last step, a log returns transformation is performed on the prices. Indeed, if we were to use the standard prices for the estimation of the correlation, we would implicity assume long memory in the form of the mean of the process, which would introduce a bias for small lag values. In that regard, log-returns are more stationary process. This is one of the requirements of the [Hayashi-Yoshida correlation estimator introduced in the next section](#hayashi-yoshida-correlation-estimator).
+
+Furthemore, multiple exchange data also imply multiple currencies. However, it is easy to show that pearson correlations are invariant under linear transformations of input varibles. In particular, if we assume a constant daily echange rate, we don't need to convert the data into the same currency. 
+
+Finally, for the `BBO` prices, we are only working with the mid price and only non-zero mid prices are considered.
+
+> **Note**: for the readers information, we also considered different alternative preprocessing pipelines in our code such as binary returns (1, -1), moving averages or resampling methods. They are made available to the user inside the `helpers/preprocessing.py` file.
+
