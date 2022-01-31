@@ -180,6 +180,8 @@ We indeed observe a `Dirac` behaviour for this plot which confirms our beliefs. 
 {%  include_relative figures/plotly/Correlation_vs_lag_iteration_0_market_US_GB.html %}
 
 Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot. Furthermore, we observe higher variability for other lags than `0` compared to the previous plot.
+
+> **Note**: the last two plots were generated using the the `2010-01-07` trade data points.
  
 The shape of these plots is similar to those of the [High Frequency Lead/lag Relationships](https://arxiv.org/ftp/arxiv/papers/1111/1111.7103.pdf) paper[[3]](#3-lead-lag). Furthermore, we observe strongly asymmetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower than those in the paper. Indeed, the second plot shows a correlation of only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particularly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low-frequency signal to a strong piece-wise step function. In opposition, the high-frequency log return signal will juggle around the constant threshold defined by the low-frequency signal. As a result, it creates artefacts that reduce the overall correlation. Hence, it is not surprising to observe a maximum correlation in the order of `5%` for some liquid-illiquid pairs.
 
