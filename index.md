@@ -129,14 +129,14 @@ To speed up this process, we developed a greedy algorithm that dynamically updat
 
 This algorithm is better illustrated in the following example. 
 
-At iteration `0`, the lagged correlations are computed using the default `step_size` (100 ms) and centered to 0:
+At iteration `0`, the lagged correlations are computed using the default `step_size` (100 ms) and centred to 0:
 
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
 
-We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is shifted to the left and the `step_size` is incremented to 150 ms (`+50%`)
+We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is shifted to the left and the `step_size` is increased to `150 ms` (`+50%`)
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_1_market_NL_US.html %}
 
-Now the peak is clearly identified (`4950ms`) since the function is not monotonic anymore.
+Now the peak is clearly identified (`4950 ms`) since the function is not monotonic anymore.
 
 # Data exploration
 
@@ -161,7 +161,7 @@ Finally, several classical financial statistics are shown in the table below:
 |the average bid/ask spread in percentage of the midquote |   0.10%           |
 
 
-We also give a few information regarding the exchanges considered in this study.
+We also give a few details regarding the exchanges considered in this study.
 
 | ID    | Name                     | Country        | Trading hours (CET) |   Currency      |
 |-------|--------------------------|----------------|---------------------|-----------------|
@@ -239,7 +239,7 @@ In the previous section, we found out that distance is not the only factor drivi
 
 The daily median of the period between trades decays over time, meaning that the stock (`Shell`) becomes more and more traded over the years. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others. In terms of lag, we would expect the British market not to be the leading market. Looking back at the figure of section [***lags evolution***](#lags-evolution), that is indeed what is observed.
 
-Then using these time series, we plot the absolute lags between exchanges against the difference of `periods` in a scatter plot. Hence, the time dependency of the data points is removed in this plot to solely focus on the relationship between the two variables. For example on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500 ms between these exchanges. Thus we add on the graph the point: $$(\mid 1.5-1 \mid \cdot \mid 500 \mid) = (0.5,500)$$. The final graph is the following:
+Then using these time series, we plot the absolute lags between exchanges against the difference of `periods` in a scatter plot. Hence, the time dependency of the data points is removed in this plot to solely focus on the relationship between the two variables. For example, on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of `500 ms` between these exchanges. Thus we add on the graph the point: $$(\mid 1.5-1 \mid \cdot \mid 500 \mid) = (0.5,500)$$. The final graph is the following:
 
 {% include_relative figures/plotly/daily_lag_vs_period_diff_trade.html %}
 
@@ -269,7 +269,7 @@ voilà viz.ipynb
 We could not embed this plot in this website because `GitHub pages` only support static websites. The resampling and moving average operations required a dynamic server and we have to use ***Heroku and Voilà*** in that regard.
 ### Propagation speed vs distances on the globe
 
-This last plot aims to provide yet another way of visualising the propagation speed. In this form, because only 3 data points are available, the plot is not very useful in it self. Therefore, we decided not to pursue further is this direction even though this plot has clear potential and that it would be interesting to continue the development.
+This last plot aims to provide yet another way of visualising the propagation speed. In this form, because only 3 data points are available, the plot is not very useful in itself. Therefore, we decided not to pursue further is this direction even though this plot has clear potential and that it would be interesting to continue the development.
 
 For the sake of completeness, the start of the implementation can be found in the `viz_globe.ipynb` notebook.
 
@@ -291,9 +291,9 @@ Finally, one of the initial objectives was to try to reconstruct Moore's from th
 Through this project, we expected to find the consequences of Moore's law in the speed of price propagation. We found out that indeed, lag duration decays over the years. However, it appears that the evolution of lags also depends on other factors. In a second time, we studied the effect of distance between markets on their lags. Distance is a constant and we expected it to be negatively correlated with the propagation delays. Nonetheless, the relation between distance and lags evolves over time, during some periods (2007-2010) the correlation is positive (the closer markets are the bigger the lag is) and the relationship becomes negative (from 2017 to 2017). Again, distance does not seem to be the only factor driving propagation delay. As a third factor to investigate, we studied the influence of stock liquidity on the resulting lags. It appears the smaller the liquidity difference between markets is the smaller the lag is.
 During this study, we also noticed that some events such as `Shell`'s bad financial situation in 2015 have a big impact on the lags.
 
-# Bibliography
+# References
 
-[1] Alsayed, Hamad, and Frank McGroarty. ‘Ultra High Frequency Statistical Arbitrage Across International Index Futures’. SSRN Scholarly Paper. Rochester, NY: Social Science Research Network, 20 February 2013. <a name="1-HF-arbtrage"> https://doi.org/10.2139/ssrn.2225753</a>.
+[1] Alsayed, Hamad, and Frank McGroarty. ‘Ultra High Frequency Statistical Arbitrage Across International Index Futures’. SSRN Scholarly Paper. Rochester, NY: Social Science Research Network, 20 February 2013. <a name="1-HF-arbitrage"> https://doi.org/10.2139/ssrn.2225753</a>.
 
 [2] Hayashi, Takaki, and Nakahiro Yoshida. ‘On Covariance Estimation of Non-Synchronously Observed Diffusion Processes’. Bernoulli 11, no. 2 (April 2005): 359–79. <a name="2-HYC">https://doi.org/10.3150/bj/1116340299</a>.
 
