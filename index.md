@@ -1,4 +1,5 @@
 # Abstract
+
 The financial world of equity trading relies on centralised exchanges. These exchanges are disseminated around the globe.
 Thus, it is sometimes possible to trade a share of one given company in multiple regions. Arbitrage pricing theory tells us that the price on those exchanges should roughly be equivalent. However, because information speed is bounded, shocks on a given share price might take some time to reach all exchanges and be incorporated into the new stock prices.
 
@@ -27,7 +28,7 @@ We expected to see a high correlation between these delays and the distances sep
 
 ## Description
 
-To conduct this study, we have access to almost `10 GB` of data. The latter contains high-frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitalisation in the `US` stock market while the second represents a stock that is traded both in `Europe (London and Amsterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
+To conduct this study, we have access to almost `10 GB` of data. The latter contains high-frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitalisation in the `US` stock market while the second represents a stock that is traded both in `Europe (London and Amsterdam)` and the `USA`. Note that `Shell` is an actively traded company and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
 
 In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name: `transatlantic dataset`. 
 
@@ -85,7 +86,7 @@ To compare the two signals $$S^1_t$$ and $$S^2_t$$ (same stock from exchanges 1 
 
 ## Hayashi-Yoshida correlation estimator
 
-Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299) covariance estimator for intraday time series observed only at discrete times in a non-synchronous manner.
+Correlations are computed using the [Hayashi Yoshida](https://projecteuclid.org/download/pdf_1/euclid.bj/1116340299)[[2]](#2-HYC) covariance estimator for intraday time series observed only at discrete times in a non-synchronous manner.
 
 Formally, is defined as follows:
 
@@ -145,9 +146,7 @@ In this section, statistics on the `transatlantic` dataset are provided. In part
 
 {% include_relative figures/plotly/nb_transaction_per_exchange.html %}
 
-TODO: update figure with hue = BBO/trades
-
-As expected, we observe more data points for the `bbo` dataset. Another interesting fact is that the `Amsterdam market` contains more transactions than the `London market` even though the latter is the primary exchange for `Shell`. 
+An interesting fact is that the `Amsterdam market` contains more transactions than the `London market` even though the latter is the primary exchange for `Shell`. 
 
 Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningful estimates for the correlation.
 
@@ -161,8 +160,6 @@ Finally, several classical financial statistics are shown in the table below:
 |average number of trades per day                         |  2800 trades      |
 |the average bid/ask spread in percentage of the midquote |   0.10%           |
 
-
-TODO: finish table
 
 We also give a few information regarding the exchanges considered in this study.
 
@@ -184,9 +181,9 @@ We indeed observe a `Dirac` behaviour for this plot which confirms our beliefs. 
 
 Again, a correlation peak occurs at `lag = 0 ms`. However, the magnitude of the peak is lower than the one of the previous plot. Furthermore, we observe higher variability for other lags than `0` compared to the previous plot.
  
-The shape of these plots is similar to those of the [High Frequency Lead/lag Relationships](https://arxiv.org/ftp/arxiv/papers/1111/1111.7103.pdf) paper. Furthermore, we observe strongly asymmetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower than those in the paper. Indeed, the second plot shows a correlation of only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particularly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low-frequency signal to a strong piece-wise step function. In opposition, the high-frequency log return signal will juggle around the constant threshold defined by the low-frequency signal. As a result, it creates artefacts that reduce the overall correlation. Hence, it is not surprising to observe a maximum correlation in the order of `5%` for some liquid-illiquid pairs.
+The shape of these plots is similar to those of the [High Frequency Lead/lag Relationships](https://arxiv.org/ftp/arxiv/papers/1111/1111.7103.pdf) paper[[3]](#3-lead-lag). Furthermore, we observe strongly asymmetrical cross-correlation functions. However, interestingly, the maximum correlation reachable is lower than those in the paper. Indeed, the second plot shows a correlation of only `30%`. Given the fact that we are dealing with the same stock price (only in different exchanges), we would have expected a higher correlation. We found that it this behaviour is strongly impacted by the difference in frequencies between the two exchanges. If one is particularly liquid compared to the other, the `forward fill` operation will, roughly speaking, transform our low-frequency signal to a strong piece-wise step function. In opposition, the high-frequency log return signal will juggle around the constant threshold defined by the low-frequency signal. As a result, it creates artefacts that reduce the overall correlation. Hence, it is not surprising to observe a maximum correlation in the order of `5%` for some liquid-illiquid pairs.
 
-Moreover, it is important to notice that the shape of the plots is largely dependent on the scale of the `x-axis` (e.g. `10 ms`, `10 s` or `100 s`). The larger the scale, the straighter the peak in the `Dirac` function. This is relevant to interpret the plot shown below and also to be able to compare our results with those of the [High Frequency Lead/lag Relationships](https://arxiv.org/ftp/arxiv/papers/1111/1111.7103.pdf) paper, i.e. the authors mostly focus on larger time scales (e.g. figure 1 is in trading days).
+Moreover, it is important to notice that the shape of the plots is largely dependent on the scale of the `x-axis` (e.g. `10 ms`, `10 s` or `100 s`). The larger the scale, the straighter the peak in the `Dirac` function. This is relevant to interpret the plot shown below and also to be able to compare our results with those of the [High Frequency Lead/lag Relationships](https://arxiv.org/ftp/arxiv/papers/1111/1111.7103.pdf) paper[[3]](#3-lead-lag), i.e. the authors mostly focus on larger time scales (e.g. figure 1 is in trading days).
 
 Finally, it is important to notice that the error bars are usually quite large and multiple overlaps occur. Therefore,  except for the peak at `0` there is no statistical evidence that the correlation estimates are different. 
 
@@ -252,8 +249,6 @@ We also showed a trend line per market pair. Each of them has a positive slope w
 
 ### Customisable historical lag
 
-TODO: update figure with the option to select BBO/trades
-
 To conclude our project, we made available additional interactive visualisations of the computed lags.
 
 The first one is an extended version of the plot shown in [section ***Time Plot***](#time-plot). It handles the following user actions: 
@@ -263,16 +258,20 @@ The first one is an extended version of the plot shown in [section ***Time Plot*
 - Change the sampling frequency of the signal (daily, weekly, monthly).
 - Zoom in/out in a particular window of the `x-axis`.
 
-The visualisation is available [at this address](https://murmuring-garden-88123.herokuapp.com/)
+The visualisation is available [at this address](https://murmuring-garden-88123.herokuapp.com/).
 
-> **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load.
+> **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load. Moreover, it is also possible to run in a web browser as a [Voilà](https://github.com/voila-dashboards/voila) application using the following terminal command:
 
-We could not embed this plot in this website because `GitHub pages` only support static websites. The resampling and moving average operations required a dynamic server and we have to use ***Heroku*** in that regard.
+```
+voilà viz.ipynb
+```
+
+We could not embed this plot in this website because `GitHub pages` only support static websites. The resampling and moving average operations required a dynamic server and we have to use ***Heroku and Voilà*** in that regard.
 ### Propagation speed vs distances on the globe
 
-This last plot aims to provide yet another way of visualising the propagation speed. In this form, because only 3 data points are available, the plot is not very useful. Nevertheless, the code is already set up and could be fed with additional data points at a later stage. We thought this plot has clear potential and that it would be interesting to start the development.
+This last plot aims to provide yet another way of visualising the propagation speed. In this form, because only 3 data points are available, the plot is not very useful in it self. Therefore, we decided not to pursue further is this direction even though this plot has clear potential and that it would be interesting to continue the development.
 
-TODO: add plot
+For the sake of completeness, the start of the implementation can be found in the `viz_globe.ipynb` notebook.
 
 > **Note**: this plot was constructed using the `GeoPandas` library.
 
@@ -294,4 +293,12 @@ During this study, we also noticed that some events such as `Shell`'s bad financ
 
 # Bibliography
 
-TODO:
+[1] Alsayed, Hamad, and Frank McGroarty. ‘Ultra High Frequency Statistical Arbitrage Across International Index Futures’. SSRN Scholarly Paper. Rochester, NY: Social Science Research Network, 20 February 2013. <a name="1-HF-arbtrage"> https://doi.org/10.2139/ssrn.2225753</a>.
+
+[2] Hayashi, Takaki, and Nakahiro Yoshida. ‘On Covariance Estimation of Non-Synchronously Observed Diffusion Processes’. Bernoulli 11, no. 2 (April 2005): 359–79. <a name="2-HYC">https://doi.org/10.3150/bj/1116340299</a>.
+
+[3] Huth, Nicolas, and Frédéric Abergel. ‘High Frequency Lead/Lag Relationships - Empirical Facts’. ArXiv:1111.7103 [q-Fin], 17 January 2012. http://arxiv.org/abs/1111.7103.
+‘PearsonrCIs.Pdf’. Accessed 30 January 2022.  <a name="3-lead-lag">https://faculty.washington.edu/gloftus/P317-318/Useful_Information/r_to_z/PearsonrCIs.pdf</a>.
+
+[4] Polytechnique, Mathieu Rosenbaum CMAP-École. ‘On Lead-Lag Estimation’, n.d., 38.
+Rémy, Philippe. Estimation of the Lead-Lag from Non-Synchronous Data. Jupyter Notebook, 2021. ca3a1e9e30bd4404d5c22f311d750df010db0648/lead_lag/lead_lag_impl.pyx <a name="4-code-leadlag">https://github.com/philipperemy/lead-lag/blob/</a>..
