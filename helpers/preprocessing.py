@@ -51,8 +51,10 @@ def to_numeric(x: pd.Series,col="price"):
     return x.dropna()
     #return __to_numeric(x,pd)
 
-def to_numeric_dask(x,col="price"):
-    return __to_numeric(x,dd,col)
+def to_numeric_dask(x,cols=["price"]):
+    for col in cols:
+        x = __to_numeric(x,dd,col)
+    return x
 
 #############################################################
 ################### Pipeline transformations ##############
