@@ -246,9 +246,9 @@ The obtained slopes do not seem to always be positive. Again we notice abnormal 
 
 ## Impact of liquidity
 
-In the previous section we found out that distance is not the only factor dring lag durations. In this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The `NYSE` with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `period` between trades for each exchange.The obtained time series evolve as follows: 
+In the previous section we found out that distance is not the only factor dring lag durations. In this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The `NYSE` with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `period` between trades for each exchange. The obtained time series evolves as follows: 
 
-{% include_relative figures/plotly/daily_mean_prices_trade.html %}
+{% include_relative figures/plotly/liquidity_evolution.html %}
 
 The daily median of the period between trades decays over time, meaning that the stock (`Shell`) is more and more traded. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others.
 
