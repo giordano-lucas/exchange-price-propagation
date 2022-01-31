@@ -134,6 +134,7 @@ At iteration `0`, the lagged correlations are computed using the default `step_s
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_0_market_NL_US.html %}
 
 We see on the previous plot that the maximum peak is not centred. At iteration `1`, the `window` is shifted to the left and the `step_size` is increased to `150 ms` (`+50%`)
+
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_1_market_NL_US.html %}
 
 Now the peak is clearly identified (`3950 ms`) since the function is not monotonic anymore.
