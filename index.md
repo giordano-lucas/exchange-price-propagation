@@ -165,9 +165,8 @@ Finally, several classical financial statistics are shown in the table below:
 |---------------------------------------------------------|-------------------|
 |the mean duration between two consecutive trades         |    6.3s           |
 |average number of trades per day                         |  2800 trades      |
-|the average tick size δ in percentage of the midquote    |                   |
-|the average bid/ask spread expressed in tick size        |                   |
-|the frequency of unit bid/ask spread                     |                   |
+|the average bid/ask spread in percentage of the midquote |   0.10%           |
+
 
 TODO: finish table
 
