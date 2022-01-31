@@ -7,7 +7,7 @@
 
 The financial world of equity trading relies on centralised exchanges. These exchanges are disseminated around the globe. Thus, it is sometimes possible to trade a share of one given company in multiple regions. Arbitrage pricing theory tells us that the price on those exchanges should roughly be equivalent. However, because information speed is bounded, shocks on a given share price might take some time to reach all exchanges and be incorporated into the new stock prices.
 
-# Goal
+# This repository
 
 This repository contains all the files used to analyze the price propagations delay for Shell's stock (RDSA) across multiple exchanges. It is organized into multiple folders and notebooks.
 
