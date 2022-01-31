@@ -12,9 +12,9 @@ This concept is illustrated visually in the following figure:
 
 {% include_relative figures/plotly/motivation.html %}
 
-Under the `x-axis`, you can find an interactive slider that allows shifting the time series of the stock traded in the XXX exchange (in'`blue`. By hovering the graph, you will be able to observe the `Pearson correlation` coefficient between the two time-series.
+Under the `x-axis`, you can find an interactive slider that allows shifting the time series of the stock traded in the `II` exchange (in'`blue`. By hovering the graph, you will be able to observe the `Pearson correlation` coefficient between the two time-series.
 
-As expected, the general dynamics underlying the stochastic processes are almost equal. However, a better fit can be obtained by slightly shifting the XXX price by `- XXX ms`. It clearly indicates that there are indeed some differences in terms of information propagation and that delayed correlation are worth looking at.
+As expected, the general dynamics underlying the stochastic processes are almost equal. However, a better fit can be obtained by slightly shifting the `II` price by `- 10 ms`. It clearly indicates that there are indeed some differences in terms of information propagation and that delayed correlation are worth looking at.
 
 > **Note**: this correlation estimator is ill-defined (as it will be explained later, the stationarity assumption between observation is not valid in this case). However this choice has been made to demonstrate the validity of the research question studied in this project. Indeed, the price times-series are easier to visualise and interpret than `log returns`.  
 
@@ -27,7 +27,7 @@ We expected to see a high correlation between these delays and the distances sep
 
 ## Description
 
-To conduct this study, we have access so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitalisation in the `US` stock market when the second represents a stock that is traded both in `Europe (London and Amsterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS XXX) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
+To conduct this study, we have access so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitalisation in the `US` stock market when the second represents a stock that is traded both in `Europe (London and Amsterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
 
 In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name: `transatlantic dataset`. 
 
@@ -140,11 +140,7 @@ We see on the previous plot that the maximum peak is not centred. At iteration `
 
 {% include_relative figures/peak_algo/Correlation_vs_delay_window_iteration_3_market_NL_US.html %}
 
-TODO: Augustin
-
 TODO: Bechmarks 
-
-TODO: Intro to Dask
 
 
 # Data exploration
@@ -172,6 +168,8 @@ Finally, several classical financial statistics are shown in the table below:
 |the average tick size δ in percentage of the midquote    |                   |
 |the average bid/ask spread expressed in tick size        |                   |
 |the frequency of unit bid/ask spread                     |                   |
+
+TODO: finish table
 
 We also give a few information regarding the exchanges considered in this study.
 
@@ -201,7 +199,6 @@ Finally, it is important to notice that the error bars are usually quite large a
 
 > **Note**: to keep our optimisation algorithm simple and fast, we do not consider error bars. As a result, the maximum lag estimation is not as robust as it could be.
 
-
 # Analysis
 
 ## Lags evolution 
@@ -226,7 +223,7 @@ This plot shows us how the different lags behave. When considering a pair of mar
 
 1. **Amsterdam is leading London**: indeed lags between `GB` and `NL` are always negative. We found this result surprising since `London` is the primary exchange for `Shell`. So, we would have expected `GB` to be the leader.
 1. **Amsterdam is leading New York**: the positivity of the lags between `GB` and `US` demonstrates that the British market is leading and the US market follows the chocks. 
-1. XXXX
+1. **New York is leading London before 2011**: the lead lag relationship between is London and New York is more complex than the two others. Indeed, before 2011 New York appears to be ahead but the opposite trend is observe after 2011 (especially true during the 2015 period).
  
 ## Distance plot 
 
@@ -250,7 +247,7 @@ In the previous section we found out that distance is not the only factor dring 
 
 {% include_relative figures/plotly/liquidity_evolution.html %}
 
-The daily median of the period between trades decays over time, meaning that the stock (`Shell`) is more and more traded. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others.
+The daily median of the period between trades decays over time, meaning that the stock (`Shell`) becomes more and more traded along the years. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others. In terms of lag, we would expect the British market not to be the leader market. Looking back at the figure of section [***lags evolution***](#lags-evolution), this is indeed that is observed.
 
 Then using these time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: $$(\mid 1.5-1 \mid \cdot \mid 500 \mid) = (0.5,500)$$. The final graph is the following:
 
@@ -259,6 +256,8 @@ Then using these time series we plot the absolute lags between exchanges against
 ## More visualisations 
 
 ### Customisable historical lag
+
+TODO: update figure with option to select BBO/trades
 
 To conclude our project, we made available additional interactive visualisations of the computed lags.
 
@@ -283,16 +282,19 @@ This last plot aims to provide yet another way of visualising the propagation sp
 # Further steps
 
 We observed substantial variability in the distribution of lags. This is mainly related to the fact that:
+
 1. the analysis was only conducted for the `RSDA` stock. 
-2. The greedy optimisation algorithm sometimes produces outliers
+2. The greedy optimisation algorithm sometimes produces outliers.
 
 Averaging the results across multiple stocks shall help reduce the variance of the estimation. 
 
 Finally, one of the initial objectives was to try to reconstruct Moore's from the dataset. It could be interesting to perform the same computation on the average lags (across stocks) to see if we can observe a real exponential decay. 
 
 # Conclusion
- 
-TODO: Augustin ou Lucas
 
 Through this project, we expected to find the consequences of Moore's law in the speed of price propagation. We found out that indeed, lag duration decays over the years. However, it appears that the evolution of lags also depends on other factors. In a second time, we studied the effect of distance between markets on their lags. Distance is a constant and we expected it to be negatively correlated with the propagation delays. Nonetheless, the relation between distance and lags evolves over time, during some periods (2007-2010) the correlation is positive (the closer markets are the bigger the lag is) and the relationship becomes negative (from 2017 to 2017). Again, distance does not seem to be the only factor driving propagation delay. As a third factor to investigate, we studied the influence of stock liquidity on the resulting lags. It appears the smaller the liquidity difference between markets is the smaller the lag is.
 During this study, we also noticed that some events such as `Shell`'s bad financial situation in 2015 have a big impact on the lags.
+
+# Bibliography
+
+TODO:
