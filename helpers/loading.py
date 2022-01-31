@@ -81,17 +81,18 @@ class Loader:
 # ******************* DASK ***********************
 # *****************************************************
 
-def load_all_data_dask(market, signal=config["transatlantic"]["signal"], precision="D"):
-    all_files = glob.glob(f"{config['dir']['data']}/{market}/{signal}/*/*")
+def load_all_data_dask(market, signal=config["transatlantic"]["signal"], precision="D",cols=["date","price"]):
+    all_files = glob.glob(f"{config['dir']['data']}/transatlantic/{market}/{signal}/*/*")
     data = dd.read_parquet(all_files)
     data = convert_time_dask(data,rounding=precision)
     
     if signal=="trade":
         data = data.rename(columns={"trade-price":"price"})
+        data = to_numeric_dask(data[cols])
     elif signal=="bbo":
+        data = to_numeric_dask(data[["date","bid-price","ask-price"]],["bid-price","ask-price"])
         data["price"] = (data["bid-price"] + data["ask-price"])/2
 
-    data = to_numeric_dask(data[["date","price"]])
     return data
 
 # *****************************************************
