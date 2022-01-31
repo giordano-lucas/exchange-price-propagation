@@ -40,6 +40,6 @@ To run the analysis by yourself follow the described steps :
 1. run the command `pip install -r requirements.txt
 ` to obtain the needed libraries to run the code.
 2. edit the `helpers/config.yml` file to chose the signal to work with :  `trade` of `bbo`.
-3. Download the data into a folder named `data`. Information about how to organize the data can be found in the `helpers/config.yml` file.
+3. Download the data ([here](https://drive.google.com/file/d/1UPGqROCnH5Xel_iYXUBnu9d0PfB_1Qvw/view?usp=sharing)) into a folder named `data`. Note that you need access rights to use the mentioned link.
 4. Run the "computational" notebooks : `lag_computer_dask.ipynb`, `liquidity_computer.ipynb` and `mean_price_and_ret_extractor.ipynb`.
 5. Run the analysis and visualization notebooks : `data_exploration.ipynb`, `results_exploration.ipynb`,`viz.ipynb`,`simple_stats.ipynb` and `viz_globe.ipynb`.
