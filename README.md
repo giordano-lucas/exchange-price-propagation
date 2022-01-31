@@ -1,42 +1,34 @@
 <img width="1195" alt="Screenshot 2022-01-29 at 09 13 05" src="https://user-images.githubusercontent.com/43466781/151653463-5805ec78-f73d-4237-939e-3bed2c09e147.png">
 ---
+:point_right: Read our **data story** online [using the following link](https://giordano-lucas.github.io/exchange-price-propagation/) :rocket: 
 
-# Data Specification 
+# Abstract 
 
-1. Focus on trade price
-2. How to join :
-    - Type : full outer join ? Merge with nearest key ([pd.merge_asof](https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.merge_asof.html)) ? 
-    - On only shared market hours ? It creates large discontinuities when we concatenate all daily files. Furthemore, not sure it's the right way to go when we deal with shifted correlation  (solution would be to use the shared market hours after shift).
-3. Loaded with `Dask` ?
-# Correlation
+The financial world of equity trading relies on centralised exchanges. These exchanges are disseminated around the globe. Thus, it is sometimes possible to trade a share of one given company in multiple regions. Arbitrage pricing theory tells us that the price on those exchanges should roughly be equivalent. However, because information speed is bounded, shocks on a given share price might take some time to reach all exchanges and be incorporated into the new stock prices.
 
-## Description
-1. Build correlation `C` 3D tensor (with confidence intervals):
-    -  1st axis : Exchange 1
-    -  2nd axis : Exchange 2
-    -  3rd axis : Correlation delay (bounded e.g. 10 seconds)
-2. Compute optimum delay for each exchange pair (accross various time steps). 
+# Goal
 
-## Questions 
+This repository contains all the files used to analyze the price propagations delay for Shell's stock (RDSA) across multiple exchanges.
 
-1. Need for noise reduction ?
-2. Need for different  correlation measures (pearson, rank, etc.) ?
-3. Rolling computation ?
+# Folders 
+The repository contains the following folders : 
 
-## Other metric
+* `figures`: this folder contains HTML version of all the plotly figures produced during the analysis.
+* `helpers`: contains multiple pythons scripts used to process, load and extract information from the raw data. It also contains the `config.yml` file.
+* `results` : 
+*  `scripts`
 
-We though about computing the lagged difference in terms of price and  compute 
+# Notebooks
 
- >  `arg max MSE(stock(t), stock(t-tau)`
+* `data_exploration.ipynb`
+* `lag_computer_dask.ipynb`
+* `liquidity_computer.ipynb`
+* `mean_price_and_ret_extractor.ipynb`
+* `merge_all_dates_data.ipynb`
+* `results_exploration.ipynb`
+* `viz.ipynb`
+* `viz_globe.ipynb`
 
-# Visualization
+# Files
 
-1. Interactive visualisation of `C` 
-2. Optimum delay visualisation 
-
-# Analysis
-
-Construct stylised facts on the metric (correclation, MSE of lagged difference) and see if they behave like log-returns and if there is some predictibility 
-# Report
-
-Data Story style
+# How to run the code
