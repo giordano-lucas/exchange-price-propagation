@@ -155,13 +155,13 @@ In this section, statistics on the `transatlantic` dataset are provided. In part
 
 {% include_relative figures/plotly/nb_transaction_per_exchange.html %}
 
+TODO: update figure with hue = BBO/trades
+
 As expected, we observe more data points for the `bbo` dataset. Another interesting fact is that the `Amsterdam market` contains more transactions that the `London market` even though the latter is the primary exchange for `Shell`. 
 
 Secondly, the size of the joined time series is shown below. It allows us to assess the quality of the error bars displayed in the cross-correlation plots. For instance, if the join size is `100`, we won't be able to get meaningful estimates for the correlation.
 
 {% include_relative figures/plotly/nb_transaction_join_market_pairs.html %}
-
-XXXX
 
 Finally, several classical financial statistics are shown in the table below:
 
@@ -172,7 +172,6 @@ Finally, several classical financial statistics are shown in the table below:
 |the average tick size δ in percentage of the midquote    |                   |
 |the average bid/ask spread expressed in tick size        |                   |
 |the frequency of unit bid/ask spread                     |                   |
-
 
 We also give a few information regarding the exchanges considered in this study.
 
@@ -231,7 +230,7 @@ This plot shows us how the different lags behave. When considering a pair of mar
  
 ## Distance plot 
 
-As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot  (blue dots) the average absolute lags between pairs of exchanges over a given period against the distance separating them. As a result, we obtain 3  data points:  one per pair of markets. In addition to these points, we plot a regression line to outline the trend. One can obtain information about the market pairs using the hover tool on the figures :
+As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot (blue dots) the average absolute lags between pairs of exchanges over a given period against the distance separating them. As a result, we obtain 3  data points:  one per pair of markets. In addition to these points, we plot a regression line to outline the trend. One can obtain information about the market pairs using the hover tool on the figures:
 
 {% include_relative figures/plotly/mean_lag_vs_distance_trade_2005_00_01_2017_12_31.html %}
 
@@ -239,7 +238,7 @@ We see that it results in a positive trend. However, here we chose to compute th
 
 {% include_relative figures/plotly/mean_lag_vs_distance_trade_2009_06_00_2009_08_00.html %}
 
-To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
+To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter of the regression. 
 
 {% include_relative figures/plotly/evolution_of_beta_parameter.html %}
 
