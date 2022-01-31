@@ -33,7 +33,8 @@ Most of the analysis is performed through notebooks. They all used the helper fu
 * `simple_stats.ipynb` : contains some simple statistics (average number of trades per day...)
 
 # Files
-
+* `runtime.txt` :  file created by Heroku. Do not modify it.
+* `requirements.txt` : text file containing the requirements to run the code. 
 # How to run the code
 To run the analysis by yourself follow the described steps : 
 1. run the command `pip install -r requirements.txt
