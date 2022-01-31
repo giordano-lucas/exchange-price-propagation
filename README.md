@@ -27,10 +27,10 @@ Most of the analysis is performed through notebooks. They all used the helper fu
 * `lag_computer_dask.ipynb` : combines the  `peak_finding` algorithm with [dask helpers](https://github.com/giordano-lucas/exchange-price-propagation/blob/main/helpers/dask.py) to compute and save (into the `results` folder) the daily lags. 
 * `liquidity_computer.ipynb` : compute the `liquidity` metric (daily median of the period between two consecutive trades) using dask.
 * `mean_price_and_ret_extractor.ipynb` : extracts (using dask) the daily mean price and returns from the data files (one file per day) into time series. 
-* `merge_all_dates_data.ipynb` : XXXXXXXXXXXXXXXXXXXXXXx
 * `results_exploration.ipynb` : in this notebook, we study the obtained results (`lags`) and generate multiple plots out of them. These plots are saved in the `figures` folder.
 * `viz.ipynb` : contains interative visulaization of the data.  
 * `viz_globe.ipynb` : contains a visual comparison of the `lags` with the distance separating exchanges using a world globe.
+* `simple_stats.ipynb` : contains some simple statistics (average number of trades per day...)
 
 # Files
 
@@ -41,4 +41,4 @@ To run the analysis by yourself follow the described steps :
 2. edit the `helpers/config.yml` file to chose the signal to work with :  `trade` of `bbo`.
 3. Download the data into a folder named `data`. Information about how to organize the data can be found in the `helpers/config.yml` file.
 4. Run the "computational" notebooks : `lag_computer_dask.ipynb`, `liquidity_computer.ipynb` and `mean_price_and_ret_extractor.ipynb`.
-5. Run the analysis and visualization notebooks : `data_exploration.ipynb`, `results_exploration.ipynb`,`viz.ipynb` and `viz_globe.ipynb`.
+5. Run the analysis and visualization notebooks : `data_exploration.ipynb`, `results_exploration.ipynb`,`viz.ipynb`,`simple_stats.ipynb` and `viz_globe.ipynb`.
