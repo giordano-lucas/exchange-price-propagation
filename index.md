@@ -29,7 +29,7 @@ We expected to see a high correlation between these delays and the distances sep
 
 To conduct this study, we have access so almost `10 GB` of data. The latter contains high frequency daily data for both `trade` and `bbo` prices of the following stocks `Microsoft (MSFT)` and `Shell (RSDA)`. The first one was chosen because of its liquidity and market capitalisation in the `US` stock market when the second represents a stock that is traded both in `Europe (London and Amsterdam)` and the `USA`. Note that `Shell` is an actively traded company (XXX STATS XXX) and has been traded in Amsterdam and at NYSE since 2009, allowing us to have a lot of data across multiple years and distant regions. Hence, it can be used to model transatlantic information propagation across the period: 2005 to 2017.
 
-In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name : `transatlantic dataset`. 
+In the code, the `MSFT` dataset is called `US sample`. `RDSa` files are aggregated under the name: `transatlantic dataset`. 
 
 The following folder organisation is adopted:
 
@@ -111,7 +111,7 @@ Computations are done using the [Dask](https://dask.org/) framework. Dask allows
 
 To compute optimal lag for one given date, we need to run a peak finding optimisation algorithm.
 
-## Peak finding algorithm : a grid search approach
+## Peak finding algorithm: a grid search approach
 
 To find the lag corresponding to the maximum correlation value, we follow a grid search approach. In other words, we:
 
@@ -201,95 +201,3 @@ Moreover, it is important to notice that the shape of the plots is largely depen
 Finally, it is important to notice that the error bars are usually quite large and multiple overlaps occur. Therefore,  except for the peak at `0` there is no statistical evidence that the correlation estimates are different. 
 
 > **Note**: to keep our optimisation algorithm simple and fast, we do not consider error bars. As a result, the maximum lag estimation is not as robust as it could be.
-
-# Analysis
-
-## Lags evolution 
-
-Now that the optimal lags are computed and saved, we perform an analysis of the obtained results. To do so, we plot a moving average (`60` days) of the lags over multiple years. Before being plotted, outliers (lags bigger than the 99th quantile) are removed from the lags. These outliers occur because of the simplicity of the [peak finding algorithm](#peak-finding-algorithm-:-a-grid-search-approach) which introduces estimation errors. For instance, a maximum lag of `10e6` seconds is unrealistic and can be discarded. 
-
-{% include_relative figures/plotly/absolute_lags_trade_60.html %}
-
-> **Note**: we are only interested in the magnitude of the lags in this plot to be able to ease the comparisons. We decided to plot them in absolute value to reflect this.
-
-As expected the `lags` are globally decaying over the years. However, it is not always the case that the propagation delay between `NL` and `GB` is smaller than the one between `US` and `GB` or `NL`. This result is further explored in the next section when comparing the `lags` with the distances separating the exchanges. 
-
-A remarkable result is also the peak located at the end of the year 2015/ beginning of 2016. This peak is probably due to the financial situation of the studied company (`Shell`). The stock price itself (see next figure) dropped significantly in the same period. Moreover, one can see on `Shell`'s [financial statements](https://reports.shell.com/annual-report/2015/strategic-report/selected-financial-data.php) that the company had a significant loss at the end of 2015. That situation might have created fears among investors and price propagation efficiency diminished. For the reader's information, the historical daily stock price of `Shell` is plotted below. We can observe a instability period in 2014-2016.
-
-{% include_relative figures/plotly/daily_mean_prices_trade.html %}
-
-To display more information about the lags dynamic we replot here the lags evolution without taking the absolute value : 
-
-{% include_relative figures/plotly/lags_trade_60.html %}
-
-This plot shows us how the different lags behave. When considering a pair of markets `m1_m2` the first market in the name (`m1` here) is the leading one, when using a positive lag.
-Thus, the positivity of the lags between `GB` and `US` demonstrates that the British market is the leading variable and the US market follows the chocks. The opposite argument applies to negative lags. 	
- 
-## Distance plot 
-
-As mentioned in the previous section, comparing the lags with the distances separating the exchanges might reveal significant results. As a first step, we plot  (blue dots) the average absolute lags between pairs of exchanges over a given period against the distance separating them. As a result, we obtain 3  data points:  one per pair of markets. In addition to these points, we plot a regression line to outline the trend. One can obtain information about the market pairs using the hover tool on the figures :
-
-{% include_relative figures/plotly/mean_lag_vs_distance_trade_2005_00_01_2017_12_31.html %}
-
-We see that it results in a positive trend. However, here we chose to compute the mean lags over the entire set of data (from `2005-00-01`,`2017-12-31`).  When changing the range to (`2009-06-00`, `2009-08-00`), the result displays a negative trend: the more exchanges further away the smaller the delay is. This result is not intuitive but might be due to multiple financial factors. Distance does not appear to be the only factor driving price propagation delays.
-
-{% include_relative figures/plotly/mean_lag_vs_distance_trade_2009_06_00_2009_08_00.html %}
-
-To further investigate the effect of distance we run a rolling regression (`60` days)  linking distances (exogenous variable) and absolute lags (endogenous variable). Then we plot the `beta` (slope) parameter: 
-
-{% include_relative figures/plotly/evolution_of_beta_parameter.html %}
-
-The obtained slopes do not seem to always be positive. Again we notice abnormal activity around 2015/2016.
-
-## Impact of liquidity
-
-In the previous section we found out that distance is not the only factor dring lag durations. In this section we investigate a new factor candidate, namely: `liquidity`. It seems likely that the price propagation is slower when the period between transactions is big. Imagine comparing The `NYSE` with a much smaller exchange where shell shares are only exchanged once an hour. To illustrate this factor, we first compute the daily median of `period` between trades for each exchange.The obtained time series evolve as follows: 
-
-{% include_relative figures/plotly/daily_mean_prices_trade.html %}
-
-The daily median of the period between trades decays over time, meaning that the stock (`Shell`) is more and more traded. However, it appears that between 2006 and 2008 this metric multiple ties higher for the British market than for the two others.
-
-Then using these time series we plot the absolute lags between exchanges against the difference of `periods`. For example: on 2015-01-12 the median `period` between trades is 1.5s in the `US` and 1.0s in `NL`, we also have a lag of 500ms between these exchanges. Thus we add on the graph the point: $$(\mid 1.5-1 \mid \cdot \mid 500 \mid) = (0.5,500)$$. The final graph is the following:
-
-{% include_relative figures/plotly/daily_lag_vs_period_diff_trade.html %}
-
-## More visualisations 
-
-### Customisable historical lag
-
-To conclude our project, we made available additional interactive visualisations of the computed lags.
-
-The first one is an extended version of the plot shown in [section ***Time Plot***](#time-plot). It handles the following user actions: 
-
-- Select the input data: `bbo` or `trade` prices.
-- Select the averaging window.
-- Change the sampling frequency of the signal (daily, weekly, monthly).
-- Zoom in/out in a particular window of the `x-axis`.
-
-The visualisation is available [at this address](https://murmuring-garden-88123.herokuapp.com/)
-
-> **Note**: this application runs in a free container within the ***Heroku*** platform. Hence, it may take a couple of seconds to load.
-
-We could not embed this plot in this website because `GitHub pages` only support static websites. The resampling and moving average operations required a dynamic server and we have to use ***Heroku*** in that regard.
-### Propagation speed vs distances on the globe
-
-This last plot aims to provide yet another way of visualising the propagation speed. In this form, because only 3 data points are available, the plot is not very useful. Nevertheless, the code is already set up and could be fed with additional data points at a later stage. We thought this plot has a clear potential and that it would be interesting to start the development.
-
-> **Note**: this plot was constructed using the `GeoPandas` library.
-
-# Further steps
-
-We observed substantial variability in the distribution of lags. This is mainly related to the fact that:
-1. the analysis was only conducted for the `RSDA` stock. 
-2. The greedy optimisation algorithm sometimes produces outliers
-
-Averaging the results across multiple stocks shall help reduce the variance of the estimation. 
-
-Finally, one of the initial objectives was to try to reconstruct Moore's from the dataset.
-
-# Conclusion
- 
-TODO: Augustin ou Lucas
-
-Through this project, we expected to find the consequences of Moore's law in the speed of price propagation. We found out that indeed, lag duration decays over the years. However, it appears that the evolution of lags also depends on other factors. In a second time, we studied the effect of distance between markets on their lags. Distance is a constant and we expected it to be negatively correlated with the propagation delays. Nonetheless, the relation between distance and lags evolves over time, during some periods (2007-2010) the correlation is positive (the closer markets are the bigger the lag is) and the relationship becomes negative (from 2017 to 2017). Again, distance does not seem to be the only factor driving propagation delay. As a third factor to investigate, we studied the influence of stock liquidity on the resulting lags. It appears the smaller the liquidity difference between markets is the smaller the lag is.
-During this study, we also noticed that some events such as Shell's bad financial situation in 2015 have a big impact on the lags.
